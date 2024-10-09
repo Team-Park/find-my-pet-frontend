@@ -24,8 +24,8 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.AUTO_ACTIONS }}
         with:
           source-directory: 'output'
-          destination-github-username: [jeongdopark]
-          destination-repository-name: [find-my-pet-frontend]
+          destination-github-username: 'jeongdopark'
+          destination-repository-name: 'find-my-pet-frontend'
           user-email: ${{ secrets.EMAIL }}
           commit-message: ${{ github.event.commits[0].message }}
           target-branch: main
