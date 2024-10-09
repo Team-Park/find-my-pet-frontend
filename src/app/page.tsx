@@ -22,8 +22,8 @@ export default function Home() {
           <div className="flex justify-center items-center relative w-full h-full ">
             <Image src={image} layout="fill" objectFit="contain" alt="banner image" placeholder="blur" />
           </div>
-          <div className="w-full h-full p-6 flex flex-col justify-center items-end gap-6">
-            <p className="font-bold md:text-2xl text-lg">
+          <div className="w-full h-full md:p-6 p-3 flex flex-col justify-center items-end md:gap-6 gap-3 break-keep">
+            <p className="font-bold md:text-xl lg:text-2xl text-sm">
               반려 동물 실종 시
               <br />
               소중한 골든타임에 필요한
@@ -39,22 +39,22 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="relative flex w-full justify-center items-center">
-        <Tabs defaultValue={activeTabValue} className="w-[400px] flex justify-center">
+      <div className="relative flex xs:flex-row flex-col-reverse gap-3 w-full justify-center items-center">
+        <Tabs defaultValue={activeTabValue} className="flex justify-center">
           <TabsList>
-            <TabsTrigger value="lost" onClick={() => setActiveTabValue("lost")}>
+            <TabsTrigger value="lost" onClick={() => setActiveTabValue("lost")} className="xs:text-base text-sm">
               실종 동물
             </TabsTrigger>
-            <TabsTrigger value="abandonment" onClick={() => setActiveTabValue("abandonment")}>
+            <TabsTrigger value="abandonment" onClick={() => setActiveTabValue("abandonment")} className="xs:text-base text-sm">
               유기 동물
             </TabsTrigger>
           </TabsList>
         </Tabs>
         {activeTabValue === "lost" && (
-          <Button className="absolute right-0" onClick={() => router.push('/register')}>실종 동물 등록</Button>
+          <Button size="default" className="xs:absolute xs:right-0 xs:text-base text-sm" onClick={() => router.push('/register')}>실종 동물 등록</Button>
         )}
       </div>
-      {activeTabValue === "abandonment" ? <PetList /> : <div className="w-full grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-6"><PetListSkeleton/></div>}
+      {activeTabValue === "abandonment" ? <PetList /> : <div className="w-full grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-6"><PetListSkeleton/></div>}
 
     </div>
   );

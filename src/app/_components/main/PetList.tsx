@@ -50,7 +50,7 @@ export default function PetList() {
 
   return (
     <div>
-      <div className="w-full grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-6">
+      <div className="w-full grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-6">
         {isLoading ? 
           <PetListSkeleton/>
           :

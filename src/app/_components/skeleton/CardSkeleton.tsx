@@ -3,7 +3,7 @@ import { Skeleton } from "../ui/skeleton";
 
 export default function CardSkeleton() {
   return (
-    <Card className="h-[350px] w-[250px] hover:cursor-pointer">
+    <Card className="h-[350px] sm:w-[250px] w-full hover:cursor-pointer">
       <Skeleton className="h-[200px] rounded-md flex justify-center relative">
       </Skeleton>
       <div className="p-2">
