@@ -2,7 +2,7 @@
     "rewrites": [
       {
         "source": "/api/:path*",
-        "destination": "https://apis.data.go.kr/1543061/abandonmentPublicSrvc/:path*"
+        "destination": "http://apis.data.go.kr/1543061/abandonmentPublicSrvc/:path*"
       }
     ]
   }
