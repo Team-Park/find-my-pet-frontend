@@ -13,13 +13,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
+import { MapFirst } from "../_components/MapFirst";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
   } from "@/components/ui/popover";
 
-import { Map } from "../_components/AddressSearchMap";
+
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -188,7 +189,7 @@ export default function LostPetRegister() {
                             <Input placeholder="정확한 주소를 입력해 주세요." {...field} />
                         </FormControl>
                         <div className="w-full h-[300px] bg-blue-200">
-                            <Map address={watchValues.place}/>
+                            <MapFirst address={watchValues.place}/>
                         </div>
                         <FormMessage />
                         </FormItem>

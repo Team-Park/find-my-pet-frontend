@@ -12,9 +12,9 @@ import { PetListSkeleton } from "./_components/skeleton/PetListSkeleton";
 
 
 export default function Home() {
-  const [activeTabValue, setActiveTabValue] = useState<"lost" | "abandonment">("abandonment");
+  const [activeTabValue, setActiveTabValue] = useState<"lost" | "abandonment">("lost");
   const router = useRouter();  
-
+  
   return (
     <div className="flex flex-col  w-full items-center gap-6">
       <div className="w-full flex justify-center">
