@@ -1,13 +1,15 @@
 "use client";
 import { Button } from "@/app/_components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import BasicMap from "@/app/_components/Map";
 import Link from "next/link";
 import Image from "next/image";
 import { IPet } from "@/app/_components/main/PetList";
+import LocalStorage from "@/lib/localStorage";
+import { MapFirst } from "@/app/_components/MapFirst";
+import { MapSecond } from "@/app/_components/MapSecond";
 
 export default function AbandonmentDetail() {
-  const petInfo:IPet = JSON.parse(localStorage.getItem('petInfo')!)
+  const petInfo:IPet = JSON.parse(LocalStorage.getItem('petInfo')!)
   return (
     <div className="w-full h-full mb-[100px]">
       <div className="w-full flex justify-between mb-[50px]">
@@ -65,7 +67,7 @@ export default function AbandonmentDetail() {
             <h1 className="text-sm flex">{petInfo.happenPlace}</h1>
           </div>
           <div className="w-full h-full">
-            <BasicMap />
+            <MapFirst address={petInfo.happenPlace}/>
           </div>
         </div>
 
@@ -94,7 +96,7 @@ export default function AbandonmentDetail() {
             </div>
           </div>
           <div className="w-full h-full">
-            <BasicMap />
+            <MapSecond address={petInfo.careAddr}/>
           </div>
         </div>
       </div>
