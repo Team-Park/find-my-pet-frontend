@@ -28,7 +28,7 @@ export function KakaoLoginDialog({ children }: { children: React.ReactElement })
         </DialogHeader>
         <DialogFooter className="w-full flex justify-center text-center">
           <Button type="button" onClick={handleKakaoLogin} className="bg-[#FEE500] w-[160px] h-[40px] flex gap-5 hover:bg-[#FEE500]">
-            <Image src={KakaoLogo} w="15px" h="15px"/>
+            <Image src={KakaoLogo} width="15" height="15" alt="카카오 로그인 로고"/>
             <div className="text-black">카카오 로그인</div>
           </Button>
         </DialogFooter>
