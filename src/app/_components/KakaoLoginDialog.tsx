@@ -8,6 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/app/_components/ui/dialog";
+import Image from "next/image";
+import KakaoLogo from "@/static/image/kakao.png"
 
 export function KakaoLoginDialog({ children }: { children: React.ReactElement }) {
   
@@ -19,14 +21,15 @@ export function KakaoLoginDialog({ children }: { children: React.ReactElement })
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md h-[250px]">
         <DialogHeader>
           <DialogTitle>Find My Pet</DialogTitle>
           <DialogDescription>Find My Pet에 오신 것을 환영합니다.</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="sm:justify-start">
-          <Button type="button" onClick={handleKakaoLogin}>
-            Kakao
+        <DialogFooter className="w-full flex justify-center text-center">
+          <Button type="button" onClick={handleKakaoLogin} className="bg-[#FEE500] w-[160px] h-[40px] flex gap-5 hover:bg-[#FEE500]">
+            <Image src={KakaoLogo} w="15px" h="15px"/>
+            <div className="text-black">카카오 로그인</div>
           </Button>
         </DialogFooter>
       </DialogContent>
