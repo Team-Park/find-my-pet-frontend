@@ -9,6 +9,7 @@ import LocalStorage from "@/lib/localStorage";
 import { useEffect, useState } from "react";
 import { Badge } from "../ui/badge";
 import useIsLoginStore from "@/store/loginStore";
+import Link from "next/link";
 
 export default function Navigation() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function Navigation() {
                 <PopoverContent className="border-1 z-50">
                   <div className="w-[120px] p-3 shadow-lg z-50 rounded-md bg-gray-50 flex flex-col gap-3">
                     <Badge>{userName}</Badge>
-                    <Button variant="outline" className="font-bold">작성 글</Button>
+                    <Button variant="outline" className="font-bold"><Link href="/profile">마이페이지</Link></Button>
                     <Button variant="outline" className="font-bold" onClick={() => {
                       LocalStorage.removeItem('userName')
                       LocalStorage.removeItem('at')
