@@ -5,7 +5,7 @@ import { Badge } from "./ui/badge";
 
 export default function AbandonmentCard({ ...pet }: IPet) {
   return (
-    <Card className="h-[350px] sm:w-[250px] w-full hover:cursor-pointer" onClick={() => console.log(pet)}>
+    <Card className="h-[350px] sm:w-[250px] w-full hover:cursor-pointer">
       <div className="h-[200px] rounded-md flex justify-center relative">
         <Image src={pet.popfile} layout="fill" alt="abandonment pet image" className="rounded-t-lg object-cover" />
       </div>

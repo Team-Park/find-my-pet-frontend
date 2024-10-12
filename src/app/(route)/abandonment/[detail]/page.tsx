@@ -7,6 +7,7 @@ import { IPet } from "@/app/_components/main/PetList";
 import LocalStorage from "@/lib/localStorage";
 import { MapFirst } from "@/app/_components/MapFirst";
 import { MapSecond } from "@/app/_components/MapSecond";
+import { formatDate } from "@/lib/utils";
 
 export default function AbandonmentDetail() {
   const petInfo:IPet = JSON.parse(LocalStorage.getItem('petInfo')!)
@@ -18,11 +19,6 @@ export default function AbandonmentDetail() {
             <ArrowLeft />
           </Button>
         </Link>
-        <div className="flex gap-2">
-          <Button>찾음</Button>
-          <Button>수정</Button>
-          <Button variant="destructive">삭제</Button>
-        </div>
       </div>
 
       <div className="flex flex-col w-full h-full gap-10">
@@ -62,9 +58,20 @@ export default function AbandonmentDetail() {
         </div>
 
         <div className="w-full h-[400px] flex flex-col bg-gray-100 rounded-md">
-          <div className="flex-col flex grow-1 rounded-t-md p-2 gap-1">
-            <h1 className="font-bold">📍 발견 위치</h1>
-            <h1 className="text-sm flex">{petInfo.happenPlace}</h1>
+        <div className="flex-col flex grow-1 rounded-t-md p-2 gap-1">
+            <h1 className="font-bold">📍 발견 정보</h1>
+            <div className="grid grid-cols-2 w-full gap-4">
+              <div className="flex flex-col">
+                <h1 className="font-bold text-sm">발견 위치</h1>
+                <span className="text-sm">{petInfo.happenPlace}</span>
+              </div>
+              <div className="flex flex-col">
+                <h1 className="font-bold text-sm">발견 일시</h1>
+                <span className="text-sm">
+                  {formatDate(petInfo.happenDt)}
+                </span>
+              </div>
+            </div>
           </div>
           <div className="w-full h-full">
             <MapFirst address={petInfo.happenPlace}/>
