@@ -27,7 +27,6 @@ export default function KakaoAuth({ searchParams }: { searchParams: { code: stri
       })
         .then((res) => res.json())
         .then((res) => {
-          console.log(res)
           LocalStorage.setItem('userName' ,JSON.stringify(res.data.name))
           LocalStorage.setItem('at', JSON.stringify(res.data.accessToken))
           setLogin()

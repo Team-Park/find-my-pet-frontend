@@ -2,6 +2,7 @@ import KakaoLogo from "@/static/image/kakao.png"
 import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
+import PostList from "@/app/_components/profile/PostList";
 
 export default function Profile(){
     
@@ -29,6 +30,7 @@ export default function Profile(){
                 <span className="font-bold text-lg">작성 목록</span>
                 <div className="flex gap-6 w-full flex-wrap justify-start">
                     <span className="font-bold text-lg w-full text-center">💡 작성한 글이 없습니다.</span>
+                    <PostList/>
                 </div>
             </div>
         </div>

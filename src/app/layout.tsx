@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navigation from "@/app/_components/layout/Navigation";
 import Footer from "@/app/_components/layout/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -35,6 +36,7 @@ export default function RootLayout({
           </div>
           <Footer />
         </div>
+        <Toaster/>
       </body>
     </html>
   );
