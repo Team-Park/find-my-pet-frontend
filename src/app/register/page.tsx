@@ -108,7 +108,7 @@ export default function LostPetRegister() {
     const formData = new FormData();
     if (values.images) {
       (Array.from(values.images) as File[]).forEach((file: File, index) => {
-        formData.append(`images`, file); // images 필드로 파일 배열 전송
+        formData.append(`image`, file); // images 필드로 파일 배열 전송
         console.log(index)
       });
     }
