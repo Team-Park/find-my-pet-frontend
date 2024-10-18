@@ -47,7 +47,7 @@ export default function PostList(){
     if(posts.length === 0 && isLoading === false) return <span className="font-bold text-lg w-full text-center">💡 작성한 글이 없습니다.</span>
 
     return (
-        <div className="flex justify-between w-full flex-wrap gap-6">
+        <div className="w-full flex sm:flex-wrap sm:flex-row flex-col gap-8">
             {
                 posts.map((post:IPost) => {
                     return (
