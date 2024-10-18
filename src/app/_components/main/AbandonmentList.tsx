@@ -31,7 +31,7 @@ export interface IPet {
   officetel: string;
 }
 
-export default function PetList() {
+export default function AbandonmentList() {
   const router = useRouter()
   const [abandonmentPetList, setAbandonmentPetList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
