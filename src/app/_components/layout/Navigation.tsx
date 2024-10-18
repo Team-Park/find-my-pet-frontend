@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { PopoverContent } from "@radix-ui/react-popover";
 import LocalStorage from "@/lib/localStorage";
-import { useEffect, useState } from "react";
-import { Badge } from "../ui/badge";
+import { useEffect } from "react";
 import useIsLoginStore from "@/store/loginStore";
 import Link from "next/link";
 
@@ -17,9 +16,8 @@ export default function Navigation() {
   const setLogin = useIsLoginStore((state) => state.setLogin)
   const setLogout = useIsLoginStore((state) => state.setLogout)
 
-  const [userName, setUserName] = useState<string | null>('')
  useEffect(() => {
-  if(LocalStorage.getItem('at')) {setLogin(); setUserName(LocalStorage.getItem('userName'))}
+  if(LocalStorage.getItem('at')) setLogin()
   else setLogout()
  }, [])
   return (
@@ -40,13 +38,11 @@ export default function Navigation() {
                 </PopoverTrigger>
                 <PopoverContent className="border-1 z-50">
                   <div className="w-[120px] p-3 shadow-lg z-50 rounded-md bg-gray-50 flex flex-col gap-3">
-                    <Badge>{userName}</Badge>
                     <Button variant="outline" className="font-bold"><Link href="/profile">마이페이지</Link></Button>
                     <Button variant="outline" className="font-bold" onClick={() => {
                       LocalStorage.removeItem('userName')
                       LocalStorage.removeItem('at')
                       setLogout()
-                      setUserName('')
                       router.push('/')
                     }}>로그아웃</Button>
                   </div>

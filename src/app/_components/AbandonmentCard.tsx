@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Card } from "./ui/card";
-import { IPet } from "./main/PetList";
+import { IPet } from "./main/AbandonmentList";
 import { Badge } from "./ui/badge";
 
 export default function AbandonmentCard({ ...pet }: IPet) {

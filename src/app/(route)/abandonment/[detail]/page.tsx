@@ -3,7 +3,7 @@ import { Button } from "@/app/_components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { IPet } from "@/app/_components/main/PetList";
+import { IPet } from "@/app/_components/main/AbandonmentList";
 import LocalStorage from "@/lib/localStorage";
 import { MapFirst } from "@/app/_components/MapFirst";
 import { MapSecond } from "@/app/_components/MapSecond";

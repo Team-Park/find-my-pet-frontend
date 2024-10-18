@@ -13,6 +13,17 @@ export function formatDate(input: string): string {
   return `${year}년 ${parseInt(month)}월 ${parseInt(day)}일`;
 }
 
+export function formatDateToKorean(dateStr: string) {
+  const date = new Date(dateStr);
+  
+  return date.toLocaleDateString("ko-KR", {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+
 export function formatTimeToISOString(time:Date) {
   const date = new Date(time);
 
