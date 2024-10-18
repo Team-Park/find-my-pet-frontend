@@ -6,14 +6,16 @@ import Image from "next/image";
 import { useState } from "react";
 import image from "../static/image/banner.jpg";
 import { ChevronRight } from "lucide-react";
-import PetList from "@/app/_components/main/PetList";
+import AbandonmentList from "./_components/main/AbandonmentList";
 import { useRouter } from "next/navigation";
-import { PetListSkeleton } from "./_components/skeleton/PetListSkeleton";
+import { useToast } from "@/hooks/use-toast";
+import LostList from "./_components/main/LostList";
 
 
 export default function Home() {
   const [activeTabValue, setActiveTabValue] = useState<"lost" | "abandonment">("lost");
   const router = useRouter();  
+  const {toast} = useToast()
   
   return (
     <div className="flex flex-col  w-full items-center gap-6">
@@ -31,7 +33,10 @@ export default function Home() {
               가이드를 제공합니다.
             </p>
             <div className="w-full flex justify-end">
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => toast({
+                  title: "💡",
+                  description: "서비스 준비 중입니다.",
+                })}>
                 가이드
                 <ChevronRight size="18" />
               </Button>
@@ -54,8 +59,7 @@ export default function Home() {
           <Button size="default" className="xs:absolute xs:right-0 xs:text-base text-sm" onClick={() => router.push('/register')}>실종 동물 등록</Button>
         )}
       </div>
-      {activeTabValue === "abandonment" ? <PetList /> : <div className="w-full grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-6"><PetListSkeleton/></div>}
-
+      {activeTabValue === "abandonment" ? <AbandonmentList /> : <LostList/>}
     </div>
   );
 }
