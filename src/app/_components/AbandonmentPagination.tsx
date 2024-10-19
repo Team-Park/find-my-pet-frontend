@@ -16,7 +16,7 @@ interface IProps {
 export default function AbandonmentPagination({currentPage, setCurrentPage}: IProps){
     const page = Array.from({ length: 5 }, (_, i) => 1 + i + Math.floor((currentPage - 1) / 5) * 5);
     return (
-        <Pagination>
+        <Pagination className="my-4">
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious onClick={() =>  setCurrentPage(currentPage-1)} />
