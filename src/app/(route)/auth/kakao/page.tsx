@@ -8,7 +8,7 @@ import { ChevronRight } from "lucide-react";
 import LocalStorage from "@/lib/localStorage";
 import useIsLoginStore from "@/store/loginStore";
 import { Spinner } from "@/components/ui/spinner";
-import { BASE_URL } from "@/app/constant/api";
+import apiClient from "@/lib/api";
 export default function KakaoAuth({ searchParams }: { searchParams: { code: string } }) {
   const router = useRouter()
   const AUTH_CODE = searchParams.code;
@@ -19,18 +19,12 @@ export default function KakaoAuth({ searchParams }: { searchParams: { code: stri
   };
   useEffect(() => {
     const fetchData = async () => {
-      await fetch(`${BASE_URL}/auth/sign-in/kakao`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      })
-        .then((res) => res.json())
+      await apiClient.post('/auth/sign-in/kakao', JSON.stringify(requestBody))
         .then((res) => {
+          console.log(res)
           LocalStorage.setItem('userName' ,JSON.stringify(res.data.name))
-          LocalStorage.setItem('at', JSON.stringify(res.data.accessToken))
-          LocalStorage.setItem('rt', JSON.stringify(res.data.refreshToken))
+          LocalStorage.setItem('at', JSON.stringify(res.data.data.accessToken))
+          LocalStorage.setItem('rt', JSON.stringify(res.data.data.refreshToken))
           setLogin()
           router.push('/')
         })

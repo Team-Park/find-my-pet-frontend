@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/app/_components/ui/button";
-import LocalStorage from "@/lib/localStorage";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,7 +7,6 @@ import { useEffect, useState } from "react";
 import { MapFirst } from "@/app/_components/MapFirst";
 import { formatDateToKorean } from "@/lib/utils";
 import DetailSkeleton from "@/app/_components/skeleton/DetailSkeleton";
-import { BASE_URL } from "@/app/constant/api";
 import {
   Carousel,
   CarouselContent,
@@ -18,6 +16,7 @@ import {
 } from "@/components/ui/carousel"
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import apiClient from "@/lib/api";
 
 interface ILost{
   author: string;
@@ -38,30 +37,16 @@ export default function LostDetail({ params }: { params: { id: string } }) {
   const router = useRouter()
   const {toast} = useToast()
   const [post, setPost] = useState<ILost>()
-  const AT = LocalStorage.getItem('at')?.replace(/"/g, '');
   useEffect(() => {
-    const getPosts = async() => await fetch(`${BASE_URL}/post/${params.id}`,{
-        method: "GET",
-        headers: {
-            'Authorization': `Bearer ${AT}`
-        }
-    })
-    .then((res) => res.json())
-    .then((res) => setPost(res.data))
-
+    const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => setPost(res.data.data))
     getPosts()
 }, [])
 
 const removePost = async (id:string) => {
-  await fetch(`${BASE_URL}/post/${id}`, {
-    method: "DELETE",
-    headers: {
-      'Authorization': `Bearer ${AT}`
-    }
-  })
+  await apiClient.delete(`/post/${id}`)
   toast({
-    title: "등록 완료",
-    description: "실종 게시글이 등록되었습니다.",
+    title: "삭제 완료",
+    description: "실종 게시글이 삭제되었습니다.",
   })
   router.push('/')
 }

@@ -1,11 +1,11 @@
 'use client'
-import LocalStorage from "@/lib/localStorage"
 import { useEffect, useState } from "react"
 import { Card } from "../ui/card";
 import Image from "next/image";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import CardSkeleton from "../skeleton/CardSkeleton";
+import apiClient from "@/lib/api";
 
 interface IPost{
     author: string;
@@ -20,18 +20,11 @@ interface IPost{
 export default function PostList(){
     const [posts, setPosts] = useState([])
     const [isLoading, setIsLoading] = useState(true);
-    const AT = LocalStorage.getItem('at')?.replace(/"/g, '');
     useEffect(() => {
         const getPosts = async() => {
                 setIsLoading(true)
-                await fetch('https://find-my-pet.duckdns.org/api/v1/user/my-page',{
-                method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${AT}`
-                }
-            })
-            .then((res) => res.json())
-            .then((res) => {setPosts(res.data); console.log(res);setIsLoading(false)})
+                await apiClient.get('/user/my-page')
+            .then((res) => {setPosts(res.data.data  ); console.log(res);setIsLoading(false)})
         }
         getPosts()
         
@@ -54,7 +47,9 @@ export default function PostList(){
                         <Link href={`lost/${post.id}`} key={post.id}>
                             <Card className="h-[350px] sm:w-[250px] w-full hover:cursor-pointer">
                                 <div className="h-[200px] rounded-md flex justify-center relative">
-                                <Image src={post.thumbnail} layout="fill" alt="abandonment pet image" className="rounded-t-lg object-cover" />
+                                    {
+                                        post.thumbnail ? <Image src={post.thumbnail} layout="fill" alt="abandonment pet image" className="rounded-t-lg object-cover" /> :  <div className="flex justify-center items-center font-bold">NO IMAGE</div>
+                                    }
                                 </div>
                                 <div className="p-2">
                                 <div className="flex gap-1 my-2">

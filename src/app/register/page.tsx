@@ -31,6 +31,7 @@ import LocalStorage from "@/lib/localStorage";
 import { formatTimeToISOString } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import apiClient from "@/lib/api";
 
 const formSchema = z.object({
   title: z.string()
@@ -69,7 +70,6 @@ export default function LostPetRegister() {
   });
 
   const watchValues = form.watch(); // 입력 값 모니터링
-  const AT = LocalStorage.getItem('at')?.replace(/"/g, '');
   const [imagePreviews, setImagePreviews] = useState<string[]>([]); // 이미지 미리보기 상태
   const [error, setError] = useState<string | null>(null); // 에러 메시지 상태
 
@@ -114,18 +114,9 @@ export default function LostPetRegister() {
     }
 
     // 3. API 호출
-    await fetch(
-      `https://find-my-pet.duckdns.org/api/v1/post?title=${values.title}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&place=${values.place}&gender=${values.gender}gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`,
-      {
-        method: 'POST',
-        headers: { 
-          "Authorization": `Bearer ${AT}`, // 인증 토큰 추가
-        },
-        body: formData, // 이미지 파일만 본문으로 전송
-      }
-    )
-    .then((res) => {
-        res.json();  
+    await apiClient.post(
+      `/post?title=${values.title}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&place=${values.place}&gender=${values.gender}gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, formData)
+    .then(() => { 
         toast({
           title: "등록 완료",
           description: "실종 게시글이 등록되었습니다.",

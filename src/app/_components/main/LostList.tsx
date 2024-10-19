@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { PetListSkeleton } from "../skeleton/PetListSkeleton";
 import AbandonmentPagination from "../AbandonmentPagination";
-import LocalStorage from "@/lib/localStorage";
 import LostCard from "../LostCard";
 import Link from "next/link";
+import apiClient from "@/lib/api";
 
 export interface ILostPet {
     author: string;
@@ -22,20 +22,12 @@ export default function LostList() {
   const [lostPetList, setLostPetList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const AT = LocalStorage.getItem('at')?.replace(/"/g, '');
 
   useEffect(() => {
     const getPosts = async() => {
         setIsLoading(true)
-        const data = await fetch(`https://find-my-pet.duckdns.org/api/v1/posts?pageSize=${9}&pageOffset=${((currentPage-1)*2)}&orderBy=CREATED_AT_DESC`,{
-            method: "GET",
-            headers: {
-                'Authorization': `Bearer ${AT}`
-
-            }
-        })
-        .then((res) => res.json())
-        setLostPetList(data.data.contents)
+        const res = await apiClient.get(`/posts?pageSize=${9}&pageOffset=${((currentPage-1)*2)}&orderBy=CREATED_AT_DESC`)
+        setLostPetList(res.data.data.contents)
         setIsLoading(false);
     }
     getPosts()
