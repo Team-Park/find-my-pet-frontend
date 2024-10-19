@@ -20,7 +20,7 @@ export interface ILostPet {
 
 export default function LostList() {
   const [lostPetList, setLostPetList] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const AT = LocalStorage.getItem('at')?.replace(/"/g, '');
 

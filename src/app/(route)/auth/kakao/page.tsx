@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
 import LocalStorage from "@/lib/localStorage";
 import useIsLoginStore from "@/store/loginStore";
-
+import { Spinner } from "@/components/ui/spinner";
+import { BASE_URL } from "@/app/constant/api";
 export default function KakaoAuth({ searchParams }: { searchParams: { code: string } }) {
   const router = useRouter()
   const AUTH_CODE = searchParams.code;
@@ -18,7 +19,7 @@ export default function KakaoAuth({ searchParams }: { searchParams: { code: stri
   };
   useEffect(() => {
     const fetchData = async () => {
-      await fetch(`https://find-my-pet.duckdns.org/api/v1/auth/sign-in/kakao`, {
+      await fetch(`${BASE_URL}/auth/sign-in/kakao`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,6 +30,7 @@ export default function KakaoAuth({ searchParams }: { searchParams: { code: stri
         .then((res) => {
           LocalStorage.setItem('userName' ,JSON.stringify(res.data.name))
           LocalStorage.setItem('at', JSON.stringify(res.data.accessToken))
+          LocalStorage.setItem('rt', JSON.stringify(res.data.refreshToken))
           setLogin()
           router.push('/')
         })
@@ -62,8 +64,8 @@ export default function KakaoAuth({ searchParams }: { searchParams: { code: stri
         </div>
       </div>
     </div>
-    <div className="w-full h-[500px] text-center font-bold">
-      Loading ...
+    <div className="w-full h-[500px] flex justify-center items-center font-bold">
+      <Spinner/>
     </div>
   </div>
   )

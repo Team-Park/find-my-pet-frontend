@@ -8,6 +8,16 @@ import { useEffect, useState } from "react";
 import { MapFirst } from "@/app/_components/MapFirst";
 import { formatDateToKorean } from "@/lib/utils";
 import DetailSkeleton from "@/app/_components/skeleton/DetailSkeleton";
+import { BASE_URL } from "@/app/constant/api";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 interface ILost{
   author: string;
@@ -25,15 +35,15 @@ interface ILost{
 }
 
 export default function LostDetail({ params }: { params: { id: string } }) {
-
+  const router = useRouter()
+  const {toast} = useToast()
   const [post, setPost] = useState<ILost>()
   const AT = LocalStorage.getItem('at')?.replace(/"/g, '');
   useEffect(() => {
-    const getPosts = async() => await fetch(`https://find-my-pet.duckdns.org/api/v1/post/${params.id}`,{
+    const getPosts = async() => await fetch(`${BASE_URL}/post/${params.id}`,{
         method: "GET",
         headers: {
             'Authorization': `Bearer ${AT}`
-
         }
     })
     .then((res) => res.json())
@@ -41,6 +51,20 @@ export default function LostDetail({ params }: { params: { id: string } }) {
 
     getPosts()
 }, [])
+
+const removePost = async (id:string) => {
+  await fetch(`${BASE_URL}/post/${id}`, {
+    method: "DELETE",
+    headers: {
+      'Authorization': `Bearer ${AT}`
+    }
+  })
+  toast({
+    title: "등록 완료",
+    description: "실종 게시글이 등록되었습니다.",
+  })
+  router.push('/')
+}
 
 
   if(!post) return <DetailSkeleton/>
@@ -53,18 +77,32 @@ export default function LostDetail({ params }: { params: { id: string } }) {
             <ArrowLeft />
           </Button>
         </Link>
+        <div className="flex gap-2">
+          <Button>수정</Button>
+          <Button variant="destructive" onClick={() => removePost(params.id)}>삭제</Button>
+        </div>
       </div>
 
       <div className="flex flex-col w-full h-full gap-10">
         <div className="flex w-full sm:justify-between sm:flex-row sm:items-start items-center flex-col gap-6">
-          <div className="w-[300px] h-[300px] rounded-md relative">
-            <Image
-              src={post.imageUrls[0].image}
-              layout="fill"
-              alt="abandonment pet image"
-              className="rounded-lg object-cover"
-            />
-          </div>
+          <Carousel className="w-full max-w-xs">
+            <CarouselContent>
+              {post.imageUrls.map((_, index) => (
+                <CarouselItem key={index}>
+                <div className="w-[300px] h-[300px] rounded-md relative">
+                    <Image
+                      src={post.imageUrls[index].image}
+                      layout="fill"
+                      alt="lost pet image"
+                      className="rounded-lg object-cover"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
           <div className="flex flex-col sm:h-full sm:justify-between sm:gap-0 gap-2">
             <div className="flex justify-between items-center w-[300px]">
               <span>작성자</span>
