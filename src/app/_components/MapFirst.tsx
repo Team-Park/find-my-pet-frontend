@@ -2,9 +2,8 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-
+ 
 export function MapFirst({address}:{address:string}) {
-    console.log(address)
     const [isValidAddress, setIsValidAddress] = useState(false);
     const container = useRef<HTMLDivElement>(null);
     useEffect(() => {

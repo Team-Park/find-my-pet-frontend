@@ -17,6 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import apiClient from "@/lib/api";
+import useLostPet from "@/store/lostPetStore";
 
 interface ILost{
   author: string;
@@ -37,8 +38,10 @@ export default function LostDetail({ params }: { params: { id: string } }) {
   const router = useRouter()
   const {toast} = useToast()
   const [post, setPost] = useState<ILost>()
+  const setEditLostPetInfo = useLostPet((state) => state.setLostPetInfo)
+
   useEffect(() => {
-    const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => setPost(res.data.data))
+    const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => {setPost(res.data.data); setEditLostPetInfo(res.data.data)})
     getPosts()
 }, [])
 
@@ -63,7 +66,7 @@ const removePost = async (id:string) => {
           </Button>
         </Link>
         <div className="flex gap-2">
-          <Button>수정</Button>
+          <Button onClick={() => router.push(`/edit/${params.id}`)}>수정</Button>
           <Button variant="destructive" onClick={() => removePost(params.id)}>삭제</Button>
         </div>
       </div>
