@@ -26,7 +26,7 @@ export default function LostList() {
   useEffect(() => {
     const getPosts = async() => {
         setIsLoading(true)
-        const res = await apiClient.get(`/posts?pageSize=${9}&pageOffset=${((currentPage-1)*2)}&orderBy=CREATED_AT_DESC`)
+        const res = await apiClient.get(`/posts?pageSize=${9}&pageOffset=${((currentPage-1))}&orderBy=CREATED_AT_DESC`)
         setLostPetList(res.data.data.contents)
         setIsLoading(false);
     }
