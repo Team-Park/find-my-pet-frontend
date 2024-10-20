@@ -24,7 +24,7 @@ export default function PostList(){
         const getPosts = async() => {
                 setIsLoading(true)
                 await apiClient.get('/user/my-page')
-            .then((res) => {setPosts(res.data.data  ); console.log(res);setIsLoading(false)})
+            .then((res) => {setPosts(res.data.data); setIsLoading(false)})
         }
         getPosts()
         

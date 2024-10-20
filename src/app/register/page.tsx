@@ -27,11 +27,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useState } from "react";
-import LocalStorage from "@/lib/localStorage";
 import { formatTimeToISOString } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
+import { BASE_URL } from "../constant/api";
 
 const formSchema = z.object({
   title: z.string()
@@ -104,18 +104,20 @@ export default function LostPetRegister() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
     const formData = new FormData();
     if (values.images) {
-      (Array.from(values.images) as File[]).forEach((file: File, index) => {
-        formData.append(`image`, file); // images 필드로 파일 배열 전송
-        console.log(index)
+      (Array.from(values.images) as File[]).forEach((file: File) => {
+        formData.append('image', file); // images 필드로 파일 배열 전송
       });
     }
-
     // 3. API 호출
     await apiClient.post(
-      `/post?title=${values.title}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&place=${values.place}&gender=${values.gender}gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, formData)
+      `/post?title=${values.title}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, 
+      formData, {
+          headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
     .then(() => { 
         toast({
           title: "등록 완료",

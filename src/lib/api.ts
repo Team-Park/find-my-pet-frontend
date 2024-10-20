@@ -1,6 +1,10 @@
 import { BASE_URL } from '@/app/constant/api';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import LocalStorage from './localStorage';
+
+
+let isRefreshing = false;
+let refreshedTokenPromise: Promise<any> | null = null;
 
 // Axios 인스턴스 생성
 const apiClient: AxiosInstance = axios.create({
@@ -26,19 +30,61 @@ apiClient.interceptors.request.use(
   }
 );
 
-// 응답 인터셉터 (Optional: 응답 후 처리)
+// 응답 인터셉터: 401 에러 처리
 apiClient.interceptors.response.use(
-  (response) => {
-    // 예: 응답 데이터를 변경하거나 특정 처리를 적용
-    return response;
-  },
-  (error) => {
-    // 에러 핸들링 (예: 에러 상태 코드에 따른 처리)
-    if (error.response && error.response.status === 401) {
-      // 인증 오류 처리
+    (response: AxiosResponse) => {
+      return response;
+    },
+    async (error) => {
+      const {
+        config,
+        response: { status },
+      } = error;
+      if (status === 401 && !isRefreshing) {
+        isRefreshing = true;
+        const originalRequest = config;
+        const refreshToken = LocalStorage.getItem('rt')?.replace(/"/g, '');;
+        const body = {
+            refreshToken: refreshToken
+        }
+        refreshedTokenPromise = axios.post(`${BASE_URL}/auth/reissue`, body)
+          .then((res) => {
+            isRefreshing = false;
+            refreshedTokenPromise = null;
+            return res.data.data;
+          })
+          .catch((err) => {
+            isRefreshing = false;
+            // 재발급 요청에 대한 권한이 없음
+            if (err.response.status === 403) {
+              // 로그아웃 로직
+            }
+            return Promise.reject(err);
+          });
+  
+        const newToken = await refreshedTokenPromise;
+  
+        if (newToken) {
+          config.headers.Authorization = newToken.accessToken;
+          LocalStorage.setItem('at', newToken.accessToken)
+          LocalStorage.setItem('rt', newToken.refreshToken)
+        }
+  
+        // '최초 만료 요청'
+        return apiClient(originalRequest);
+      }
+  
+    //   이전에 토큰 갱신을 시도했지만 아직 완료되지 않았을 때
+      if (status === 401 && isRefreshing) {
+        // 요청 대기
+        const newToken = await refreshedTokenPromise;
+        if (newToken) {
+          config.headers.Authorization = newToken;
+        }
+        // 대기 요청 처리
+        return apiClient(config);
+      }
+      return Promise.reject(error);
     }
-    return Promise.reject(error);
-  }
-);
-
+  );
 export default apiClient;
