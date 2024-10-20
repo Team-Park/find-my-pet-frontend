@@ -4,7 +4,7 @@ import LocalStorage from './localStorage';
 
 
 let isRefreshing = false;
-let refreshedTokenPromise: Promise<any> | null = null;
+let refreshedTokenPromise: Promise<{accessToken: string; refreshToken: string}> | null = null;
 
 // Axios 인스턴스 생성
 const apiClient: AxiosInstance = axios.create({
