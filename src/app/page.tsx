@@ -3,19 +3,32 @@
 import { Button } from "@/app/_components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/app/_components/ui/tabs";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import image from "../static/image/banner.jpg";
 import { ChevronRight } from "lucide-react";
 import AbandonmentList from "./_components/main/AbandonmentList";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import LostList from "./_components/main/LostList";
+import LocalStorage from "@/lib/localStorage";
+import useIsLoginStore from "@/store/loginStore";
 
 
 export default function Home() {
   const [activeTabValue, setActiveTabValue] = useState<"lost" | "abandonment">("lost");
   const router = useRouter();  
   const {toast} = useToast()
+  const setLogout = useIsLoginStore((state) => state.setLogout)
+
+  useEffect(() => {
+    if(!LocalStorage.getItem('rt')){
+      setLogout()
+      toast({
+        title: "로그인이 만료되었습니다.",
+        description: "로그인이 필요합니다.",
+      })
+    }
+  }, [])
   
   return (
     <div className="flex flex-col  w-full items-center gap-6">

@@ -6,6 +6,7 @@ import LocalStorage from './localStorage';
 let isRefreshing = false;
 let refreshedTokenPromise: Promise<{accessToken: string; refreshToken: string}> | null = null;
 
+
 // Axios 인스턴스 생성
 const apiClient: AxiosInstance = axios.create({
   baseURL: BASE_URL, // 기본 API URL
@@ -56,6 +57,9 @@ apiClient.interceptors.response.use(
           .catch((err) => {
             isRefreshing = false;
             // 재발급 요청에 대한 권한이 없음
+            window.location.href = '/'
+            LocalStorage.removeItem('at')
+            LocalStorage.removeItem('rt')
             if (err.response.status === 403) {
               // 로그아웃 로직
             }
