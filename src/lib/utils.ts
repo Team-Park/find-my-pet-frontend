@@ -36,3 +36,7 @@ export function formatTimeToISOString(time:Date) {
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
+
+export function truncateText(text:string, maxLength = 100) {
+  return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+}
