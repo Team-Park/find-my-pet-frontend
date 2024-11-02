@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Card } from "./ui/card";
-import { formatDateToKorean} from "@/lib/utils";
+import { formatDateToKorean, truncateText} from "@/lib/utils";
 
 export interface ILostPet {
     author: string;
@@ -15,7 +15,7 @@ export interface ILostPet {
 
 export default function LostCard({ ...pet }: ILostPet) {
   return (
-    <Card className="h-[350px] sm:w-[250px] w-full hover:cursor-pointer flex flex-col gap-2">
+    <Card className="h-[450px] sm:w-[400px] w-full hover:cursor-pointer flex flex-col gap-4">
       <div className="h-[200px] rounded-md flex justify-center relative">
         {
             pet.thumbnail ? 
@@ -24,14 +24,13 @@ export default function LostCard({ ...pet }: ILostPet) {
             <div className="flex justify-center items-center font-bold">NO IMAGE</div>
         }
       </div>
-      <div className="font-bold items-center text-center w-full">{pet.title}</div>
+      <div className="font-bold items-center text-center w-full h-12 px-4">{pet.title}</div>
       <div className="px-2">
         <div className="flex gap-1 flex-col text-sm">
-            <div>장소 : {pet.place}</div>
-            <div>날짜 : {formatDateToKorean(pet.time)}</div>
-            <div>description</div>
+            <div className="bg-gray-100 p-2 rounded-md">📍 {pet.place}</div>
+            <div className="bg-gray-100 p-2 rounded-md">📅 {formatDateToKorean(pet.time)}</div>
         </div>
-        <span className="text-sm">{pet.description}</span>
+        <span className="text-sm">{truncateText(pet.description)}</span>
       </div>
     </Card>
   );

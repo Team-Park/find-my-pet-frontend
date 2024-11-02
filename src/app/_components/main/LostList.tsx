@@ -22,7 +22,6 @@ export default function LostList() {
   const [lostPetList, setLostPetList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-
   useEffect(() => {
     const getPosts = async() => {
         setIsLoading(true)
@@ -34,7 +33,7 @@ export default function LostList() {
 }, [currentPage])
   return (
     <div>
-      <div className="w-full grid lg:grid-cols-4 md:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-6">
+      <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
         {isLoading ? 
           <PetListSkeleton/>
           :
