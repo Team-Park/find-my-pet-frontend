@@ -31,8 +31,8 @@ export default function Navigation() {
               isLogin ? 
               <Popover>
                 <PopoverTrigger asChild>
-                  <Avatar className="cursor-pointer">
-                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                  <Avatar className="cursor-pointer p-2 border border-b-2">
+                    <AvatarImage src="../../favicon.ico" alt="@shadcn" />
                     <AvatarFallback>-</AvatarFallback>
                   </Avatar>
                 </PopoverTrigger>
