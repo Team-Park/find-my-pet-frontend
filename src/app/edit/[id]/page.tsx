@@ -26,7 +26,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
@@ -76,12 +75,8 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
   
 
   const watchValues = form.watch(); // 입력 값 모니터링
-  console.log(watchValues)
-  const [error, setError] = useState<string | null>(null); // 에러 메시지 상태
-
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
     const body = {...values, postId: ID, lat:0, lng:0}
     // 3. API 호출
     await apiClient.put(

@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://find-my-pet-frontend.vercel.app/
+
+# Sitemaps
+Sitemap: https://find-my-pet-frontend.vercel.app/sitemap.xml
