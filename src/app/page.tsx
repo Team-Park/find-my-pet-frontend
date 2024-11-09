@@ -58,10 +58,7 @@ export default function Home() {
               가이드를 제공합니다.
             </p>
             <div className="w-full flex justify-end">
-              <Button variant="outline" onClick={() => toast({
-                  title: "💡",
-                  description: "서비스 준비 중입니다.",
-                })}>
+              <Button variant="outline" onClick={() => router.push('/guide')}>
                 가이드
                 <ChevronRight size="18" />
               </Button>
