@@ -31,7 +31,7 @@ export default function LostCard({ ...pet }: ILostPet) {
             <div className="bg-gray-100 p-2 rounded-md">📍 {pet.place}</div>
             <div className="p-2 rounded-md flex gap-2">
               <div className=" text-white bg-emerald-500 rounded-md p-2 text-xs font-bold">📅 {formatDateToKorean(pet.time)}</div>
-              <div className=" text-white bg-amber-500 rounded-md p-2 text-xs font-bold">사례금 {pet.gratuity}만원</div>
+              {pet.gratuity !== 0 && <div className=" text-white bg-amber-500 rounded-md p-2 text-xs font-bold">사례금 {pet.gratuity}만원</div>}
             </div>
         </div>
         <span className="text-sm">{truncateText(pet.description)}</span>

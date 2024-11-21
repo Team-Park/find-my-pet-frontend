@@ -41,7 +41,7 @@ export default function LostDetail({ params }: { params: { id: string } }) {
   const setEditLostPetInfo = useLostPet((state) => state.setLostPetInfo)
 
   useEffect(() => {
-      const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => {setPost(res.data.data); setEditLostPetInfo(res.data.data)})
+      const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => {console.log(res); setPost(res.data.data); setEditLostPetInfo(res.data.data)})
       getPosts()
   }, [])
 
