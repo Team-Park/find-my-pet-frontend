@@ -41,7 +41,7 @@ export function MapFirst({address}:{address:string}) {
 
                             // 인포윈도우로 장소에 대한 설명을 표시합니다
                             const infowindow = new kakao.maps.InfoWindow({
-                                content: '<div style="width:150px;text-align:center;padding:6px 0;">발견 위치</div>'
+                                content: '<div style="width:150px;text-align:center;padding:6px 0;">실종 위치</div>'
                             });
                             infowindow.open(map1, marker);
 

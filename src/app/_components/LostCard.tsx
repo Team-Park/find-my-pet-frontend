@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Card } from "./ui/card";
 import { formatDateToKorean, truncateText} from "@/lib/utils";
+import { Badge } from "./ui/badge";
 
 export interface ILostPet {
     author: string;
@@ -28,7 +29,10 @@ export default function LostCard({ ...pet }: ILostPet) {
       <div className="px-2">
         <div className="flex gap-1 flex-col text-sm">
             <div className="bg-gray-100 p-2 rounded-md">📍 {pet.place}</div>
-            <div className="bg-gray-100 p-2 rounded-md">📅 {formatDateToKorean(pet.time)}</div>
+            <div className="p-2 rounded-md flex gap-2">
+              <div className=" text-white bg-emerald-500 rounded-md p-2 text-xs font-bold">📅 {formatDateToKorean(pet.time)}</div>
+              <div className=" text-white bg-amber-500 rounded-md p-2 text-xs font-bold">사례금 {pet.gratuity}만원</div>
+            </div>
         </div>
         <span className="text-sm">{truncateText(pet.description)}</span>
       </div>

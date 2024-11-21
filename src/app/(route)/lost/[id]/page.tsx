@@ -41,18 +41,18 @@ export default function LostDetail({ params }: { params: { id: string } }) {
   const setEditLostPetInfo = useLostPet((state) => state.setLostPetInfo)
 
   useEffect(() => {
-    const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => {setPost(res.data.data); setEditLostPetInfo(res.data.data)})
-    getPosts()
-}, [])
+      const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => {setPost(res.data.data); setEditLostPetInfo(res.data.data)})
+      getPosts()
+  }, [])
 
-const removePost = async (id:string) => {
-  await apiClient.delete(`/post/${id}`)
-  toast({
-    title: "삭제 완료",
-    description: "실종 게시글이 삭제되었습니다.",
-  })
-  router.push('/')
-}
+  const removePost = async (id:string) => {
+    await apiClient.delete(`/post/${id}`)
+    toast({
+      title: "삭제 완료",
+      description: "실종 게시글이 삭제되었습니다.",
+    })
+    router.push('/')
+  }
 
 
   if(!post) return <DetailSkeleton/>
@@ -94,26 +94,30 @@ const removePost = async (id:string) => {
           <div className="flex flex-col sm:h-full sm:justify-between sm:gap-0 gap-2">
             <div className="flex justify-between items-center w-[300px]">
               <span>작성자</span>
-              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center">{post.author}</div>
+              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{post.author}</div>
             </div>
             <div className="flex justify-between items-center w-[300px]">
               <span>연락처</span>
-              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center">{post.phoneNum}</div>
+              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{post.phoneNum}</div>
             </div>
             <div className="flex justify-between items-center w-[300px]">
               <span>위치</span>
-              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center">
+              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">
                 {post.place}
               </div>
             </div>
             <div className="flex justify-between items-center w-[300px]">
-              <span>시간</span>
-              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center">{formatDateToKorean(post.time)}</div>
+              <span>날짜</span>
+              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{formatDateToKorean(post.time)}</div>
+            </div>
+            <div className="flex justify-between items-center w-[300px]">
+              <span>사례금</span>
+              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{post.gratuity}만원</div>
             </div>
           </div>
         </div>
 
-        <div className="w-full h-[70px] bg-blue-100 rounded-md flex justify-start items-center px-4 text-sm">
+        <div className="w-full py-4 bg-blue-100 rounded-md flex justify-start items-center px-4 text-sm">
           💡 {post.description}
         </div>
 

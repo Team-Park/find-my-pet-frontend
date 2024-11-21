@@ -121,9 +121,9 @@ export function LostPetForm() {
           name="gratuity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>사례금</FormLabel>
+              <FormLabel>사례금 (만원 단위)</FormLabel>
               <FormControl>
-                <Input placeholder="사례금을 입력해 주세요." {...field} />
+                <Input placeholder="사례금을 입력해 주세요. (30만원 -> 30입력)" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

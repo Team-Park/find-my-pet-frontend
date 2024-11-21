@@ -51,7 +51,7 @@ export default function Home() {
           </div>
           <div className="w-full h-full md:p-6 p-3 flex flex-col justify-center items-end md:gap-6 gap-3 break-keep">
             <p className="font-bold md:text-xl lg:text-2xl text-sm">
-              반려 동물 실종 시
+              반려견 실종 시
               <br />
               소중한 골든타임에 필요한
               <br />

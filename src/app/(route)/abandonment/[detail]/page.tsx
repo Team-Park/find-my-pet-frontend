@@ -53,7 +53,7 @@ export default function AbandonmentDetail() {
           </div>
         </div>
 
-        <div className="w-full h-[70px] bg-blue-100 rounded-md flex justify-start items-center px-4 text-sm">
+        <div className="w-full bg-blue-100 rounded-md flex justify-start items-center px-4 text-sm">
           💡 {petInfo.specialMark}
         </div>
 
