@@ -6,8 +6,8 @@ import guide_2 from "@/static/image/guide_2.png"
 import guide_3 from "@/static/image/guide_3.png"
 import guide_4 from "@/static/image/guide_4.png"
 import guide_5 from "@/static/image/guide_5.png"
-import guide_6 from "@/static/image/guide_6.JPG"
-import guide_7 from "@/static/image/guide_7.JPG"
+import guide_6 from "@/static/image/guide_6.jpg"
+import guide_7 from "@/static/image/guide_7.jpg"
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Link as LinkIcon } from "lucide-react";

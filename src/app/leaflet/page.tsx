@@ -71,15 +71,18 @@ export default function Leaflet(){
     const [photo1, setPhoto1] = useState('');
     const [photo2, setPhoto2] = useState('');
     const [chatURL, setChatURL] = useState('');
-    const [preview1, setPreview1] = useState(null);
-    const [preview2, setPreview2] = useState(null);
+    const [preview1, setPreview1] = useState<string|null>(null);
+    const [preview2, setPreview2] = useState<string|null>(null);
   
-    const handleFileChange = (event, setPreview) => {
-      const file = event.target.files[0];
+    const handleFileChange = ( event: React.ChangeEvent<HTMLInputElement>, 
+        setPreview: React.Dispatch<React.SetStateAction<string | null>>) => {
+      const file = event.target.files![0];
       if (file) {
         const reader = new FileReader();
         reader.onload = () => {
-          setPreview(reader.result); // Base64로 변환된 이미지 URL
+            if (typeof reader.result === "string") {
+                setPreview(reader.result); // Base64로 변환된 이미지 URL
+              }
         };
         reader.readAsDataURL(file);
       }
