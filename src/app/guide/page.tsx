@@ -6,8 +6,8 @@ import guide_2 from "@/static/image/guide_2.png"
 import guide_3 from "@/static/image/guide_3.png"
 import guide_4 from "@/static/image/guide_4.png"
 import guide_5 from "@/static/image/guide_5.png"
-import guide_6 from "@/static/image/guide_6.jpg"
-import guide_7 from "@/static/image/guide_7.jpg"
+import guide_8 from "@/static/image/guide_8.jpg"
+import guide_9 from "@/static/image/guide_9.jpg"
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Link as LinkIcon } from "lucide-react";
@@ -57,8 +57,8 @@ export default function Guide(){
                     </div>
                     <div className="border-l-2 border-gray-500 flex items-center p-2 text-sm">지해피독은 유실동물 구조 봉사모임입니다. 금전적인 요구를 하지 않으며, 실종 동물 구조에 함께 동참합니다.</div>
                     <div className="sm:flex justify-between">
-                        <Image src={guide_6} alt="포인핸드 실종신고 글쓰기" width={400} height={600} className="rounded-md my-10"/>                    
-                        <Image src={guide_7} alt="포인핸드 실종신고 글쓰기" width={400} height={600} className="rounded-md my-10"/>                    
+                        <Image src={guide_8} alt="포인핸드 실종신고 글쓰기" width={400} height={600} className="rounded-md my-10"/>                    
+                        <Image src={guide_9} alt="포인핸드 실종신고 글쓰기" width={400} height={600} className="rounded-md my-10"/>                    
                     </div>
                     <div className="w-full p-2 rounded-md bg-gray-100 font-bold my-4 flex justify-between items-center">
                         <div>2️⃣ 포인핸드 앱 - 실종/제보</div>
