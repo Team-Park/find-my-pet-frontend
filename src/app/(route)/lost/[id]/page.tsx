@@ -32,6 +32,7 @@ interface ILost{
   place: string;
   time: string;
   title: string;
+  isMine: boolean;
 }
 
 export default function LostDetail({ params }: { params: { id: string } }) {
@@ -65,32 +66,42 @@ export default function LostDetail({ params }: { params: { id: string } }) {
             <ArrowLeft />
           </Button>
         </Link>
-        <div className="flex gap-2">
-          <Button onClick={() => router.push(`/edit/${params.id}`)}>수정</Button>
-          <Button variant="destructive" onClick={() => removePost(params.id)}>삭제</Button>
-        </div>
+        {
+          post.isMine &&
+          <div className="flex gap-2">
+            <Button onClick={() => router.push(`/edit/${params.id}`)}>수정</Button>
+            <Button variant="destructive" onClick={() => removePost(params.id)}>삭제</Button>
+          </div>
+        }
       </div>
 
       <div className="flex flex-col w-full h-full gap-10">
         <div className="flex w-full sm:justify-between sm:flex-row sm:items-start items-center flex-col gap-6">
-          <Carousel className="w-full max-w-xs">
-            <CarouselContent>
-              {post.imageUrls.map((_, index) => (
-                <CarouselItem key={index}>
-                <div className="w-[300px] h-[300px] rounded-md relative">
-                    <Image
-                      src={post.imageUrls[index].image}
-                      layout="fill"
-                      alt="lost pet image"
-                      className="rounded-lg object-cover"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+          {
+            post.imageUrls.length !== 0 ?
+            <Carousel className="w-full max-w-xs">
+              <CarouselContent>
+                {post.imageUrls.map((_, index) => (
+                  <CarouselItem key={index}>
+                  <div className="w-[300px] h-[300px] rounded-md relative">
+                      <Image
+                        src={post.imageUrls[index].image}
+                        layout="fill"
+                        alt="lost pet image"
+                        className="rounded-lg object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+            :
+            <div className="h-[200px] rounded-md flex justify-center relative ">
+              <div className="flex justify-center items-center font-bold">NO IMAGE</div>
+            </div>
+          }
           <div className="flex flex-col sm:h-full sm:justify-between sm:gap-0 gap-2">
             <div className="flex justify-between items-center w-[300px]">
               <span>작성자</span>
