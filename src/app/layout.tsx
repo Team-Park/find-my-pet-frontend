@@ -4,6 +4,7 @@ import "./globals.css";
 import Navigation from "@/app/_components/layout/Navigation";
 import Footer from "@/app/_components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
+import GoogleAnalytics from "@/lib/GoogleAnalytics";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,6 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased w-full flex flex-col items-center`}>
+      {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
+					<GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
+				)}
         <div className="w-full flex flex-col min-h-screen h-full">
           <Navigation />
           <div className="flex flex-grow justify-center p-6 ">
