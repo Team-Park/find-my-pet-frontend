@@ -35,7 +35,7 @@ export default function LostList() {
     getPosts()
 }, [currentPage])
   return (
-    <div>
+    <div className="w-full flex flex-col justify-center">
       <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
         {isLoading ? 
           <PetListSkeleton/>

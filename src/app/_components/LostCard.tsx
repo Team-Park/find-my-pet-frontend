@@ -16,7 +16,7 @@ export interface ILostPet {
 
 export default function LostCard({ ...pet }: ILostPet) {
   return (
-    <Card className="h-[450px] sm:w-[400px] w-full hover:cursor-pointer flex flex-col gap-4">
+    <Card className="h-[450px] w-full hover:cursor-pointer flex flex-col gap-4">
       <div className="h-[200px] rounded-md flex justify-center relative">
         {
             pet.thumbnail ? 
