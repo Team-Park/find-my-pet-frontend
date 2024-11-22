@@ -1,6 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 export function MapSecond({address}:{address:string}) {
@@ -62,8 +63,8 @@ export function MapSecond({address}:{address:string}) {
             <>
                 <div className='z-20 absolute w-full h-full bg-gray-800 opacity-90 flex-col gap-6'></div>
                 <div className='z-30 flex flex-col justify-center text-white items-center w-full h-full absolute bg-transparent gap-4'>
-                    <span>주소가 존재하지 않습니다.</span>
-                    <Button>주소 찾기 <ArrowRight/></Button>
+                    <span>주소가 존재하지 않습니다. 도로명 주소를 입력해 주세요.</span>
+                    <Link target='_blank' href="https://map.kakao.com/?q="><div className='w-[120px] bg-blue-500 flex justify-center rounded-sm py-2 px-2'>주소 찾기 <ArrowRight/></div></Link>
                 </div>
             </>
         }
