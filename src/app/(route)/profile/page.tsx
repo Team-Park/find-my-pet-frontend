@@ -1,8 +1,10 @@
+'use client'
 import KakaoLogo from "@/static/image/kakao.png"
 import { Card, CardContent, CardHeader } from "@/app/_components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import PostList from "@/app/_components/profile/PostList";
+import LocalStorage from "@/lib/localStorage";
 
 export default function Profile(){
     
@@ -16,12 +18,12 @@ export default function Profile(){
                     </CardHeader> 
                     <CardContent className="flex items-center h-full gap-4 py-3">
                             <Avatar>
-                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                                <AvatarImage alt="user avartar" />
                                 <AvatarFallback>-</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col h-full ">
-                                <span className="text-sm">정도</span>
-                                <span className="text-sm">jeongdo.indiv@gmail.com</span>
+                                <span className="text-sm">{JSON.parse(LocalStorage.getItem('userName')!)}</span>
+                                <span className="text-sm">{JSON.parse(LocalStorage.getItem('mail')!)}</span>
                             </div>
                     </CardContent>
                 </Card>

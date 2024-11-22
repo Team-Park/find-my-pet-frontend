@@ -21,8 +21,8 @@ export default function KakaoAuth({ searchParams }: { searchParams: { code: stri
     const fetchData = async () => {
       await apiClient.post('/auth/sign-in/kakao', JSON.stringify(requestBody))
         .then((res) => {
-          console.log(res)
-          LocalStorage.setItem('userName' ,JSON.stringify(res.data.name))
+          LocalStorage.setItem('userName' ,JSON.stringify(res.data.data.name))
+          LocalStorage.setItem('mail' ,JSON.stringify(res.data.data.email))
           LocalStorage.setItem('at', JSON.stringify(res.data.data.accessToken))
           LocalStorage.setItem('rt', JSON.stringify(res.data.data.refreshToken))
           setLogin()

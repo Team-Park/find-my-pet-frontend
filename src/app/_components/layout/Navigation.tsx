@@ -42,6 +42,8 @@ export default function Navigation() {
                     <Button variant="outline" className="font-bold" onClick={() => {
                       LocalStorage.removeItem('userName')
                       LocalStorage.removeItem('at')
+                      LocalStorage.removeItem('mail')
+                      LocalStorage.removeItem('rt')
                       setLogout()
                       router.push('/')
                     }}>로그아웃</Button>
