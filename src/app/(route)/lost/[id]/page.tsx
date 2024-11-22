@@ -1,11 +1,12 @@
 "use client";
 import { Button } from "@/app/_components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, SquareArrowOutUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MapFirst } from "@/app/_components/MapFirst";
 import { formatDateToKorean } from "@/lib/utils";
+
 import DetailSkeleton from "@/app/_components/skeleton/DetailSkeleton";
 import {
   Carousel,
@@ -33,6 +34,7 @@ interface ILost{
   time: string;
   title: string;
   isMine: boolean;
+  openChatUrl: string;
 }
 
 export default function LostDetail({ params }: { params: { id: string } }) {
@@ -40,7 +42,6 @@ export default function LostDetail({ params }: { params: { id: string } }) {
   const {toast} = useToast()
   const [post, setPost] = useState<ILost>()
   const setEditLostPetInfo = useLostPet((state) => state.setLostPetInfo)
-
   useEffect(() => {
       const getPosts = async () => await apiClient.get(`/post/${params.id}`).then((res) => {setPost(res.data.data); setEditLostPetInfo(res.data.data)})
       getPosts()
@@ -57,7 +58,6 @@ export default function LostDetail({ params }: { params: { id: string } }) {
 
 
   if(!post) return <DetailSkeleton/>
-  
   return (
     <div className="w-full h-full mb-[100px]">
       <div className="w-full flex justify-between mb-[50px]">
@@ -66,13 +66,16 @@ export default function LostDetail({ params }: { params: { id: string } }) {
             <ArrowLeft />
           </Button>
         </Link>
-        {
-          post.isMine &&
-          <div className="flex gap-2">
-            <Button onClick={() => router.push(`/edit/${params.id}`)}>수정</Button>
-            <Button variant="destructive" onClick={() => removePost(params.id)}>삭제</Button>
-          </div>
-        }
+        <div className="flex gap-2 items-center">
+          {post.openChatUrl.length > 0 && <Button><Link target="_blank" href={post.openChatUrl} className="flex gap-2 items-center">함께 찾기 <SquareArrowOutUpRight size={16}/></Link></Button>}
+          {
+            post.isMine &&
+            <div className="flex gap-2">
+              <Button onClick={() => router.push(`/edit/${params.id}`)}>수정</Button>
+              <Button variant="destructive" onClick={() => removePost(params.id)}>삭제</Button>
+            </div>
+          }
+        </div>
       </div>
 
       <div className="flex flex-col w-full h-full gap-10">
@@ -98,7 +101,7 @@ export default function LostDetail({ params }: { params: { id: string } }) {
               <CarouselNext />
             </Carousel>
             :
-            <div className="h-[200px] rounded-md flex justify-center relative ">
+            <div className="h-[300px] w-[300px]  rounded-md flex justify-center relative bg-gray-100">
               <div className="flex justify-center items-center font-bold">NO IMAGE</div>
             </div>
           }

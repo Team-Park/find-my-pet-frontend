@@ -58,6 +58,7 @@ const formSchema = z.object({
   }).refine((date) => date < new Date(), {
     message: "시간은 현재보다 이전이어야 합니다.",
   }),
+  chatURL: z.any()
 });
 
 export default function LostPetRegister() {
@@ -111,7 +112,7 @@ export default function LostPetRegister() {
     }
     // 3. API 호출
     await apiClient.post(
-      `/post?title=${values.title}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, 
+      `/post?title=${values.title}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, 
       formData, {
           headers: {
           'Content-Type': 'multipart/form-data'
@@ -285,12 +286,26 @@ export default function LostPetRegister() {
               )}
             />
 
+              <FormField
+                control={form.control}
+                name="chatURL"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>오픈채팅 URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="오픈채팅 URL을 입력해 주세요." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
             <FormField
               control={form.control}
               name="images"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>사진들</FormLabel>
+                  <FormLabel>사진</FormLabel>
                   <FormControl>
                     <Input
                       id="pictures"
