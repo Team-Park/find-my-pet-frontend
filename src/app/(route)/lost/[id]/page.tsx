@@ -67,7 +67,7 @@ export default function LostDetail({ params }: { params: { id: string } }) {
           </Button>
         </Link>
         <div className="flex gap-2 items-center">
-          {post.openChatUrl.length > 0 && <Button><Link target="_blank" href={post.openChatUrl} className="flex gap-2 items-center">함께 찾기 <SquareArrowOutUpRight size={16}/></Link></Button>}
+          {post.openChatUrl.length > 0 && <Link target="_blank" href={post.openChatUrl} className="flex gap-2 items-center"><Button>함께 찾기 <SquareArrowOutUpRight size={16}/></Button></Link>}
           {
             post.isMine &&
             <div className="flex gap-2">
