@@ -373,13 +373,13 @@ export default function Leaflet(){
                             <div className="flex justify-center items-center relative w-[500px]">
                                 {
                                     preview1 &&
-                                    <img src={preview1} alt="banner image" placeholder="blur" />
+                                    <img src={preview1} alt="banner image"/>
                                 }
                             </div>
                             <div className="flex justify-center items-center relative w-[500px]">
                                 {
                                     preview2 &&
-                                    <img src={preview2} alt="banner image" placeholder="blur" />
+                                    <img src={preview2} alt="banner image"/>
                                 }
                             </div>
                         </div>
