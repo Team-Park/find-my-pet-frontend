@@ -20,7 +20,7 @@ import {
     FormLabel,
     FormMessage,
   } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const formSchema = z.object({
@@ -49,25 +49,39 @@ const formSchema = z.object({
     date: z.string()
     .nonempty({ message: "실종날짜를 입력해 주세요." })
   });
+type FormSchemaType = z.infer<typeof formSchema>;
 
 export default function Leaflet(){
     const contentRef = useRef<HTMLDivElement>(null);
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: { title: "" },
+        defaultValues: {
+            title: "",
+            contact: "",
+            gratuity: "",
+            age: "",
+            gender: "male", // 기본값 설정
+            description: "",
+            place: "",
+            feature: "",
+            date: "",
+            photo1: undefined,
+            photo2: undefined,
+            chatURL: "",
+          },
       });
       
     const reactToPrintFn = useReactToPrint({ contentRef });
-    const [title, setTitle] = useState('강아지를 찾습니다!')
-    const [type, setType] = useState('시츄')
-    const [gender, setGender] = useState('수컷')
-    const [age, setAge] = useState('7살')
-    const [date, setDate] = useState('2024년 11월 9일 (토) 오후 12:00')
-    const [place, setPlace] = useState('운동장 부근')
-    const [feature, setFeature] = useState('5KG, 갈색/흰색털 섞임, 꼬리가 긴편, 겁이 많음')
-    const [description, setDescription] = useState('천둥번개 치는 어두운 날이었고, 겁을 먹고 집 방충망을 뚫고 나갔습니다.가족들이 애타게 찾고 있어요. 보호/목격하시면 꼭 연락부탁드려요.보호중이신 분, 찾는데 결정적 제보 주신 분께 사례하겠습니다.');
-    const [gratuity, setGratuity] = useState(50);
-    const [contact, setContact] = useState('010-0000-0000');
+    const [title, setTitle] = useState('제목을 입력해주세요.')
+    const [type, setType] = useState('종')
+    const [gender, setGender] = useState('성별')
+    const [age, setAge] = useState('나이')
+    const [date, setDate] = useState('실종 날짜')
+    const [place, setPlace] = useState('실종 장소')
+    const [feature, setFeature] = useState('실종 동물 특징')
+    const [description, setDescription] = useState('실종 당시 자세한 설명');
+    const [gratuity, setGratuity] = useState('사례금');
+    const [contact, setContact] = useState('연락처');
     const [photo1, setPhoto1] = useState('');
     const [photo2, setPhoto2] = useState('');
     const [chatURL, setChatURL] = useState('');
@@ -88,9 +102,20 @@ export default function Leaflet(){
       }
     };
 
-    const onSubmit = () => {
-        console.log('test입니다')
-    }
+    const onSubmit: SubmitHandler<FormSchemaType> = (data) => {
+        setAge(data.age)
+        setChatURL(data.chatURL)
+        setDescription(data.description)
+        setContact(data.contact)
+        setDate(data.date)
+        setFeature(data.feature)
+        setGender(data.gender)
+        setGratuity(data.gratuity)
+        setPlace(data.place)
+        setTitle(data.title)
+        setType(data.type)
+      };
+
 
 
     return (
@@ -105,14 +130,19 @@ export default function Leaflet(){
                             <DialogTitle>전단지 Form 채우기</DialogTitle>
                             </DialogHeader>
                             <div className="grid w-full items-center gap-3">
-                                <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                                <Form {...form}> 
+                                    <form onSubmit={(e) => {
+                                            e.preventDefault(); // 디버깅용
+                                            console.log("Submitting form...");
+                                            // console.log(values)
+                                            form.handleSubmit(onSubmit)(e);
+                                        }} className="space-y-8">
                                         <FormField
                                             control={form.control}
                                             name="title"
                                             render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>제목</FormLabel>
+                                                                                                                                                                                                                                                                         <FormLabel>제목</FormLabel>
                                                 <FormControl>
                                                 <Input placeholder="제목을 입력해주세요." {...field} />
                                                 </FormControl>
@@ -135,7 +165,7 @@ export default function Leaflet(){
                                                     <FormItem className="flex items-center space-x-1 space-y-0">
                                                     <FormControl>
                                                         <RadioGroupItem value="female" />
-                                                    </FormControl>
+                                                     </FormControl>
                                                     <FormLabel>암컷</FormLabel>
                                                     </FormItem>
                                                     <FormItem className="flex items-center space-x-1 space-y-0">
@@ -145,6 +175,19 @@ export default function Leaflet(){
                                                     <FormLabel>수컷</FormLabel>
                                                     </FormItem>
                                                 </RadioGroup>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="type"
+                                            render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>종</FormLabel>
+                                                <FormControl>
+                                                <Input placeholder={'동물 종을 입력해주세요.'} {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
@@ -291,9 +334,22 @@ export default function Leaflet(){
                                         )}
                                         </div>
                                         <div className="w-full flex justify-end">
-                                        <Button type="submit" size="lg" variant="default">
-                                            적용
-                                        </Button>
+                                            <Button type="button" size="lg" variant="default" onClick={async () => {
+                                                    // 유효성 검사 실행
+                                                    const isValid = await form.trigger();
+                                                    console.log(isValid)
+                                                    if (isValid) {
+                                                    // 유효하면 현재 값을 가져와 onSubmit 호출
+                                                    const values = form.getValues();
+                                                    onSubmit(values);
+                                                    } else {
+                                                    console.log("Validation failed");
+                                                    console.log(form.formState.errors);
+
+                                                    }
+                                                }}>
+                                                적용
+                                            </Button>
                                         </div>                                 
                                     </form>
                                 </Form>
@@ -307,64 +363,59 @@ export default function Leaflet(){
                 
             </div>
             <div className="w-full h-full bg-gray-100 flex flex-col justify-center items-center" ref={contentRef}>
-                <div className="sm:text-8xl w-full h-[30%] bg-red-600 flex justify-center items-center text-5xl font-bold text-white flex-col gap-6">
+                <div className="sm:text-7xl w-full h-[30%] bg-red-600 flex justify-center items-center text-5xl font-bold text-white flex-col gap-6">
                     {title}
                     <span className="sm:text-xl text-sm">잃어버린 강아지를 찾는 즉시 수거하겠습니다. 떼지 말아주세요. 부탁드립니다.</span>
                 </div>
                 <div className="w-full h-full flex flex-col">
                     <div className="w-full flex justify-center">
                         <div className="flex gap-5">
-                            <div className="flex justify-center items-center relative max-w-[600px] max-h-[500px] ">
-                                <Image src={img} objectFit="contain" alt="banner image" placeholder="blur" />
+                            <div className="flex justify-center items-center relative w-[500px]">
+                                {
+                                    preview1 &&
+                                    <img src={preview1} alt="banner image" placeholder="blur" />
+                                }
                             </div>
-                            <div className="flex justify-center items-center relative max-w-[600px] max-h-[500px] ">
-                                <Image src={img} objectFit="contain" alt="banner image" placeholder="blur" />
+                            <div className="flex justify-center items-center relative w-[500px]">
+                                {
+                                    preview2 &&
+                                    <img src={preview2} alt="banner image" placeholder="blur" />
+                                }
                             </div>
                         </div>
                     </div>
-                    <div className="w-full px-10 bg-yellow-200 flex flex-col gap-6 py-10 relative">
+                    <div className="w-full px-10 flex flex-col gap-6 py-10 relative">
                         <div className="w-full flex flex-col gap-2 sm:text-4xl text-2xl font-bold">
-                            <div>⚫️ 실종견 : <span className="text-red-600">{type} / {gender} / {age}</span></div>
-                            <div>⚫️ 실종날짜 : <span className="text-red-600">{date}</span></div>
-                            <div>⚫️ 실종장소 : <span className="text-red-600">{place}</span></div>
-                            <div>⚫️ 특징 : <span className="text-red-600">{feature}</span></div>
+                            <div>⚫️ 실종견 : <span>{type} / {gender === 'male' ? '수컷' : '암컷'} / {age}살</span></div>
+                            <div>⚫️ 실종날짜 : <span>{date}</span></div>
+                            <div>⚫️ 실종장소 : <span>{place}</span></div>
+                            <div>⚫️ 특징 : <span>{feature}</span></div>
+                            {gratuity && <div>⚫️ 사례금 : <span>{gratuity}만원</span></div>}
                         </div>
-                        <div className="w-full flex flex-col gap-2 sm:text-2xl text-xl font-bold">
+                        <div className="w-full flex flex-col gap-2 sm:text-2xl text-xl font-bold min-h-[170px]">
                             <p>{description}</p>
                         </div>
-                        <div className="w-full flex flex-col items-center gap-2 sm:text-6xl text-4xl font-bold text-red-600">
-                            사례금 : {}
-                        </div>
-                        <div className="w-full flex flex-col items-center gap-2 sm:text-6xl text-4xl font-bold">
-                            010-2225-3988
-                        </div>
-                        <div className="absolute bottom-0 left-0 sm:w-[120px] sm:h-[120px] w-[80px] h-[80px] flex flex-col justify-center items-center bg-slate-200 z-100 font-bold sm:text-base text-xs">파인드마이펫
-                        <QRCodeSVG
-                            value={"https://findmypet.site/"}
-                            title={"Title for my QR Code"}
-                            size={50}
-                            bgColor={"#ffffff"}
-                            fgColor={"#000000"}
-                            level={"L"}
+                        
+                        <div className="w-full flex items-center justify-center gap-10 sm:text-6xl text-4xl font-bold h-[200px] relative">
+                            TEL) {contact}
+                            <div className="absolute right-10 m:w-[120px] sm:h-[120px] w-[80px] h-[80px] flex flex-col justify-center items-center z-100 font-bold sm:text-base text-xs">목격제보<br/> 오픈채팅
+                            <QRCodeSVG
+                                value={chatURL}
+                                title={"제보 오픈채팅 URL"}
+                                size={50}
+                                bgColor={"#ffffff"}
+                                fgColor={"#000000"}
+                                level={"L"}
                             />
+                            </div>
                         </div>
-                        <div className="absolute bottom-0 right-0 sm:w-[120px] sm:h-[120px] w-[80px] h-[80px] flex flex-col justify-center items-center bg-slate-200 z-100 font-bold sm:text-base text-xs">목격제보<br/> 오픈채팅
-                        <QRCodeSVG
-                            value={chatURL}
-                            title={"제보 오픈채팅 URL"}
-                            size={50}
-                            bgColor={"#ffffff"}
-                            fgColor={"#000000"}
-                            level={"L"}
-                            />
-                        </div>
+                        
                     </div>
                     
                 </div>
                 
             </div>
             <Button size="lg" onClick={() => reactToPrintFn()} className="text-xl">🖨️ 프린트</Button>
-            
         </div>
     )
 }
