@@ -17,8 +17,15 @@ export default function Navigation() {
   const setLogout = useIsLoginStore((state) => state.setLogout)
 
  useEffect(() => {
-  if(LocalStorage.getItem('at')) setLogin()
-  else setLogout()
+  if(LocalStorage.getItem('at')) {
+    setLogin()
+  }
+  else {
+    setLogout()
+    LocalStorage.removeItem('email')
+    LocalStorage.removeItem('name')
+    LocalStorage.removeItem('role')
+  }
  }, [])
   return (
     <div className="w-full flex justify-center border-b px-6">
@@ -40,10 +47,11 @@ export default function Navigation() {
                   <div className="w-[120px] p-3 shadow-lg z-50 rounded-md bg-gray-50 flex flex-col gap-3">
                     <Button variant="outline" className="font-bold"><Link href="/profile">마이페이지</Link></Button>
                     <Button variant="outline" className="font-bold" onClick={() => {
-                      LocalStorage.removeItem('userName')
                       LocalStorage.removeItem('at')
-                      LocalStorage.removeItem('mail')
                       LocalStorage.removeItem('rt')
+                      LocalStorage.removeItem('email')
+                      LocalStorage.removeItem('name')
+                      LocalStorage.removeItem('role')
                       setLogout()
                       router.push('/')
                     }}>로그아웃</Button>
