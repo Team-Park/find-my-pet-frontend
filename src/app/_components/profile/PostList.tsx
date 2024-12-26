@@ -24,7 +24,7 @@ export default function PostList(){
     useEffect(() => {
         const getPosts = async() => {
                 setIsLoading(true)
-                await apiClient.get('/user/my-page')
+                await apiClient.get('/posts/mine')
             .then((res) => {setPosts(res.data.data); setIsLoading(false)})
         }
         getPosts()
