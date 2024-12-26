@@ -31,6 +31,7 @@ import { formatTimeToISOString } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
+import LocalStorage from "@/lib/localStorage";
 
 const formSchema = z.object({
   title: z.string()
@@ -58,7 +59,9 @@ const formSchema = z.object({
   }).refine((date) => date < new Date(), {
     message: "시간은 현재보다 이전이어야 합니다.",
   }),
-  chatURL: z.any()
+  chatURL: z.any(),
+  customNickname: z.any(),
+  
 });
 
 export default function LostPetRegister() {
@@ -104,6 +107,8 @@ export default function LostPetRegister() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const requestParams = LocalStorage.getItem('role')?.replace(/"/g, '') === 'ROLE_ADMIN' ? `/post?title=${values.title}&customNickname=${values.customNickname}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1` 
+    : `/post?title=${values.title}&customNickname=${null}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`;  
     const formData = new FormData();
     if (values.images) {
       (Array.from(values.images) as File[]).forEach((file: File) => {
@@ -112,7 +117,7 @@ export default function LostPetRegister() {
     }
     // 3. API 호출
     await apiClient.post(
-      `/post?title=${values.title}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, 
+      `/post?title=${values.title}&customNickname=${values.customNickname}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, 
       formData, {
           headers: {
           'Content-Type': 'multipart/form-data'
@@ -145,6 +150,20 @@ export default function LostPetRegister() {
                 </FormItem>
               )}
             />
+            {LocalStorage.getItem('role')?.replace(/"/g, '') === 'ROLE_ADMIN' &&
+            <FormField
+              control={form.control}
+              name="customNickname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>닉네임</FormLabel>
+                  <FormControl>
+                    <Input placeholder="닉네임을 입력해주세요." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />}
 
             <div className="grid grid-cols-2 gap-6">
               <FormField
