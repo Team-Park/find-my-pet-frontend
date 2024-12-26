@@ -22,8 +22,8 @@ export default function Profile(){
                                 <AvatarFallback>-</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col h-full ">
-                                <span className="text-sm">{JSON.parse(LocalStorage.getItem('userName')!)}</span>
-                                <span className="text-sm">{JSON.parse(LocalStorage.getItem('mail')!)}</span>
+                                <span className="text-sm">{JSON.parse(LocalStorage.getItem('name')!)}</span>
+                                <span className="text-sm">{JSON.parse(LocalStorage.getItem('email')!)}</span>
                             </div>
                     </CardContent>
                 </Card>

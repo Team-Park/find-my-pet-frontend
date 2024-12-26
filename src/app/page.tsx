@@ -13,14 +13,12 @@ import LostList from "./_components/main/LostList";
 import LocalStorage from "@/lib/localStorage";
 import useIsLoginStore from "@/store/loginStore";
 
-
 export default function Home() {
   const [activeTabValue, setActiveTabValue] = useState<"lost" | "abandonment">("lost");
   const router = useRouter();  
   const {toast} = useToast()
   const setLogout = useIsLoginStore((state) => state.setLogout)
   const isLogin = useIsLoginStore((state) => state.isLogin)
-
   const handleRegisterClick = () => {
     if(isLogin){
       router.push('/register')
@@ -35,6 +33,12 @@ export default function Home() {
   useEffect(() => {
     if(!LocalStorage.getItem('rt')){
       setLogout()
+      console.log('here-2')
+        LocalStorage.removeItem('at')
+        LocalStorage.removeItem('rt')
+        LocalStorage.removeItem('email')
+        LocalStorage.removeItem('name')
+        LocalStorage.removeItem('role')
       toast({
         title: "로그인이 만료되었습니다.",
         description: "로그인이 필요합니다.",

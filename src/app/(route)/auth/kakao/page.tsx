@@ -9,30 +9,25 @@ import LocalStorage from "@/lib/localStorage";
 import useIsLoginStore from "@/store/loginStore";
 import { Spinner } from "@/components/ui/spinner";
 import apiClient from "@/lib/api";
-export default function KakaoAuth({ searchParams }: { searchParams: { code: string } }) {
+
+export default function KakaoAuth({ searchParams }: { searchParams: { accessToken: string, refreshToken: string } }) {
   const router = useRouter()
-  const AUTH_CODE = searchParams.code;
   const setLogin = useIsLoginStore((state) => state.setLogin)
-  const requestBody = {
-    code: AUTH_CODE,
-    redirectUri: `${process.env.NEXT_PUBLIC_REDIRECT_URI}/auth/kakao`,
-  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      await apiClient.post('/auth/sign-in/kakao', JSON.stringify(requestBody))
-        .then((res) => {
-          LocalStorage.setItem('userName' ,JSON.stringify(res.data.data.name))
-          LocalStorage.setItem('mail' ,JSON.stringify(res.data.data.email))
-          LocalStorage.setItem('at', JSON.stringify(res.data.data.accessToken))
-          LocalStorage.setItem('rt', JSON.stringify(res.data.data.refreshToken))
+          const getUserInfo = async () => {
+             await apiClient.get('/user/me').then((res) => {
+              LocalStorage.setItem('email', JSON.stringify(res.data.data.email))
+              LocalStorage.setItem('name', JSON.stringify(res.data.data.name))
+              LocalStorage.setItem('role', JSON.stringify(res.data.data.role))
+             })
+          }
+          getUserInfo()
+          LocalStorage.setItem('at', JSON.stringify(searchParams.accessToken))
+          LocalStorage.setItem('rt', JSON.stringify(searchParams.refreshToken))
           setLogin()
           router.push('/')
-        })
-        .catch((error) => console.log(error));
-    };
-
-    fetchData();
-  }, []);
+    }, []);
 
   return (
   <div className="flex flex-col  w-full items-center gap-6">
