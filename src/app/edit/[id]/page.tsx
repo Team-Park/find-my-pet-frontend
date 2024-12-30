@@ -30,6 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
 import useLostPet from "@/store/lostPetStore";
+import LocalStorage from "@/lib/localStorage";
 
 
 const formSchema = z.object({
@@ -40,7 +41,9 @@ const formSchema = z.object({
   phoneNum: z.string()
     .regex(/^010\d{8}$/, { message: "올바른 핸드폰 번호를 입력해 주세요." }),
 
-  gratuity: z.string().nonempty({ message: "사례금 없을 시 0을 입력해 주세요." }),
+  gratuity: z.string()
+    .nonempty({ message: "사례금 없을 시 0을 입력해 주세요." }),
+
   gender: z.enum(['male', 'female']),
   description: z.string()
     .min(1, { message: "상세 설명을 입력해 주세요." })
@@ -48,14 +51,18 @@ const formSchema = z.object({
 
   place: z.string()
     .nonempty({ message: "장소를 입력해 주세요." }),
+
+  images: z.any(),
   time: z.date({
     required_error: "시간을 입력해 주세요.",
     invalid_type_error: "올바른 날짜 형식을 입력해 주세요."
   }).refine((date) => date < new Date(), {
     message: "시간은 현재보다 이전이어야 합니다.",
   }),
+  chatURL: z.any(),
+  customNickname: z.any(),
+  
 });
-
 export default function LostPetRegister({ params }: { params: { id: string } }) {
   const router = useRouter()
   const {toast} = useToast()
@@ -69,6 +76,8 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
       gender: lostPetInfo?.gender as 'male' | 'female',
       description: lostPetInfo?.description,
       place: lostPetInfo?.place,
+      chatURL: lostPetInfo?.chatURL,
+      customNickname: lostPetInfo?.customNickname
     },
   });
   const ID = params.id
@@ -108,6 +117,20 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
                 </FormItem>
               )}
             />
+            {LocalStorage.getItem('role')?.replace(/"/g, '') === 'ROLE_ADMIN' &&
+            <FormField
+              control={form.control}
+              name="customNickname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>닉네임</FormLabel>
+                  <FormControl>
+                    <Input placeholder="닉네임을 입력해주세요." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />}
 
             <div className="grid grid-cols-2 gap-6">
               <FormField
@@ -248,6 +271,20 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
                 </FormItem>
               )}
             />
+
+            <FormField
+                control={form.control}
+                name="chatURL"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>오픈채팅 URL</FormLabel>
+                    <FormControl>
+                      <Input placeholder="오픈채팅 URL을 입력해 주세요." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
         
             <div className="w-full flex justify-end">

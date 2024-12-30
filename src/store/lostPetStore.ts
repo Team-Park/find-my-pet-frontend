@@ -10,7 +10,9 @@ interface ILostPetInfo {
     gratuity: number,
     description: string,
     lat: number,
-    lng: number
+    lng: number,
+    chatURL: string,
+    customNickname: string,
 }
 
 interface ILostPet{
