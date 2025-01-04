@@ -11,6 +11,9 @@ import { Spinner } from "@/components/ui/spinner";
 import apiClient from "@/lib/api";
 
 export default function KakaoAuth({ searchParams }: { searchParams: { accessToken: string, refreshToken: string } }) {
+  console.log(searchParams)
+  console.log(searchParams.accessToken, JSON.stringify(searchParams.accessToken))
+  console.log(searchParams.refreshToken, JSON.stringify(searchParams.refreshToken))
   const router = useRouter()
   const setLogin = useIsLoginStore((state) => state.setLogin)
 
