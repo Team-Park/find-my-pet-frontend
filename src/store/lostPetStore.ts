@@ -13,6 +13,7 @@ interface ILostPetInfo {
     lng: number,
     chatURL: string,
     customNickname: string,
+    missingAnimalStatus: "FOUND" | "SEARCHING" | "SEEN",
 }
 
 interface ILostPet{

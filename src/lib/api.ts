@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
         config,
         response: { status },
       } = error;
-      if (status === 401 && !isRefreshing) {
+      if (status === 403 && !isRefreshing) {
         isRefreshing = true;
         const originalRequest = config;
         const refreshToken = LocalStorage.getItem('rt')?.replace(/"/g, '');;
@@ -79,7 +79,7 @@ apiClient.interceptors.response.use(
       }
   
     //   이전에 토큰 갱신을 시도했지만 아직 완료되지 않았을 때
-      if (status === 401 && isRefreshing) {
+      if (status === 403 && isRefreshing) {
         // 요청 대기
         const newToken = await refreshedTokenPromise;
         if (newToken) {

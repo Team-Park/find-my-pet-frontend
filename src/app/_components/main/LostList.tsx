@@ -17,6 +17,7 @@ export interface ILostPet {
     time: string;
     title: string;
     description: string;
+    missingAnimalStatus: "SEARCHING" | "FOUND" | "SEEN";
 }
 
 export default function LostList() {
