@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Card } from "./ui/card";
-import { formatDateToKorean, truncateText} from "@/lib/utils";
-import { Badge } from "./ui/badge";
+import { formatDateToKorean, parseGratuityValue, truncateText} from "@/lib/utils";
 
 export interface ILostPet {
     author: string;
@@ -12,9 +11,22 @@ export interface ILostPet {
     time: string;
     title: string;
     description: string;
+    missingAnimalStatus: "FOUND" | "SEARCHING" | "SEEN";
 }
 
 export default function LostCard({ ...pet }: ILostPet) {
+
+  const renderStatusLabel = (missingStatus: "FOUND" | "SEARCHING" | "SEEN") => {
+    switch (missingStatus){
+      case "FOUND":
+        return <div className=" text-white bg-gray-500 rounded-md p-2 text-xs font-bold">완료</div>
+      case "SEARCHING":
+        return <div className=" text-white bg-red-500 rounded-md p-2 text-xs font-bold">실종</div>
+      case "SEEN":
+        return <div className=" text-white bg-blue-500 rounded-md p-2 text-xs font-bold">목격</div>
+    }
+  }
+
   return (
     <Card className="h-[450px] w-full hover:cursor-pointer flex flex-col gap-4">
       <div className="h-[200px] rounded-md flex justify-center relative">
@@ -30,8 +42,9 @@ export default function LostCard({ ...pet }: ILostPet) {
         <div className="flex gap-1 flex-col text-sm">
             <div className="bg-gray-100 p-2 rounded-md">📍 {pet.place}</div>
             <div className="p-2 rounded-md flex gap-2">
-              <div className=" text-white bg-emerald-500 rounded-md p-2 text-xs font-bold">📅 {formatDateToKorean(pet.time)}</div>
-              {pet.gratuity !== 0 && <div className=" text-white bg-amber-500 rounded-md p-2 text-xs font-bold">사례금 {pet.gratuity}만원</div>}
+              {renderStatusLabel(pet.missingAnimalStatus)}
+              <div className=" text-white bg-emerald-500 rounded-md p-2 text-xs font-bold">📅 {formatDateToKorean(pet.time)}</div>              
+              {pet.missingAnimalStatus === "SEARCHING" && pet.gratuity !== 0 && <div className=" text-white bg-amber-500 rounded-md p-2 text-xs font-bold"> 사례금 {parseGratuityValue(pet.gratuity, pet.missingAnimalStatus)}</div>}
             </div>
         </div>
         <span className="text-sm">{truncateText(pet.description)}</span>
