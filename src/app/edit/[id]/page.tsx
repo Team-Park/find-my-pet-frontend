@@ -6,6 +6,7 @@ import { z } from "zod";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 import {
   Form,
   FormControl,
@@ -14,6 +15,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,6 +39,7 @@ import { useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
 import useLostPet from "@/store/lostPetStore";
 import LocalStorage from "@/lib/localStorage";
+import { useState } from "react";
 
 
 const formSchema = z.object({
@@ -66,6 +75,7 @@ const formSchema = z.object({
 export default function LostPetRegister({ params }: { params: { id: string } }) {
   const router = useRouter()
   const {toast} = useToast()
+  const [gratuity, setGratuity] = useState<"reward"|"negotiable"|"none">("none");
   const lostPetInfo = useLostPet((state) => state.lostPet)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -86,7 +96,7 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
   const watchValues = form.watch(); // 입력 값 모니터링
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const body = {...values, postId: ID, lat:0, lng:0}
+    const body = {...values, postId: ID, lat:0, lng:0, missingAnimalStatus: lostPetInfo?.missingAnimalStatus }
     // 3. API 호출
     await apiClient.put(
       `/post`, body)
@@ -154,7 +164,38 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
                   <FormItem>
                     <FormLabel>사례금</FormLabel>
                     <FormControl>
-                      <Input placeholder="사례금을 입력해 주세요." {...field} />
+                    <div className="flex gap-2">
+                    <Select
+                      onValueChange={(value: "reward" | "negotiable" | "none") => {
+                        setGratuity(value);
+                        // 선택된 값에 따라 적절한 값을 넘김
+                        if (value === "negotiable") {
+                          field.onChange("-1");
+                        } else if (value === "none") {
+                          field.onChange("0");
+                        } else {
+                          field.onChange(""); // "reward" 선택 시 빈 값 (사용자 입력을 기다림)
+                        }
+                      }}
+                    >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="선택" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="negotiable">협의</SelectItem>
+                            <SelectItem value="none">없음</SelectItem>
+                            <SelectItem value="reward">사례금</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {gratuity === "reward" && (
+                          <Input
+                            type="number"
+                            placeholder="사례금 입력 (만원)"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))} // 입력값을 숫자로 변환하여 저장
+                          />
+                        )}
+                    </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

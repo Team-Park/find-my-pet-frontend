@@ -40,3 +40,17 @@ export function formatTimeToISOString(time:Date) {
 export function truncateText(text:string, maxLength = 100) {
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 }
+
+export const parseGratuityValue = (gratuity: number, missingAnimalStatus: "SEARCHING" | "FOUND" | "SEEN") => {
+  if(missingAnimalStatus === "FOUND"){
+    return "-"
+  }
+  if(gratuity === -1){
+    return "협의"
+  }
+  if(gratuity === 0){
+    return "없음"
+  }
+  return gratuity+"만원"
+}
+

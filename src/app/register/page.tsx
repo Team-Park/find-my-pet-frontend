@@ -14,6 +14,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
@@ -61,7 +68,7 @@ const formSchema = z.object({
   }),
   chatURL: z.any(),
   customNickname: z.any(),
-  
+  missingAnimalStatus: z.any(),
 });
 
 export default function LostPetRegister() {
@@ -71,7 +78,7 @@ export default function LostPetRegister() {
     resolver: zodResolver(formSchema),
     defaultValues: { title: "" },
   });
-
+  const [gratuity, setGratuity] = useState<"reward"|"negotiable"|"none">("none");
   const watchValues = form.watch(); // 입력 값 모니터링
   const [imagePreviews, setImagePreviews] = useState<string[]>([]); // 이미지 미리보기 상태
   const [error, setError] = useState<string | null>(null); // 에러 메시지 상태
@@ -107,17 +114,36 @@ export default function LostPetRegister() {
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const requestParams = LocalStorage.getItem('role')?.replace(/"/g, '') === 'ROLE_ADMIN' ? `/post?title=${values.title}&customNickname=${values.customNickname}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1` 
-    : `/post?title=${values.title}&customNickname=${null}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`;  
     const formData = new FormData();
     if (values.images) {
       (Array.from(values.images) as File[]).forEach((file: File) => {
         formData.append('image', file); // images 필드로 파일 배열 전송
       });
     }
+
+    const queryParams = new URLSearchParams({
+      title: values.title,
+      phoneNum: values.phoneNum,
+      time: formatTimeToISOString(values.time),
+      place: values.place,
+      gender: values.gender,
+      gratuity: values.gratuity,
+      description: values.description,
+      missingAnimalStatus: values.missingAnimalStatus,
+      lat: "1",
+      lng: "1",
+    });
+  
+    if (values.customNickname) {
+      queryParams.append("customNickname", values.customNickname);
+    }
+    if (values.chatURL) {
+      queryParams.append("openChatUrl", values.chatURL);
+    }
+
     // 3. API 호출
     await apiClient.post(
-      `/post?title=${values.title}&customNickname=${values.customNickname}&phoneNum=${values.phoneNum}&time=${formatTimeToISOString(values.time)}&openChatUrl=${values.chatURL}&place=${values.place}&gender=${values.gender}&gratuity=${values.gratuity}&description=${values.description}&lat=1&lng=1`, 
+      `/post?${queryParams.toString()}`, 
       formData, {
           headers: {
           'Content-Type': 'multipart/form-data'
@@ -187,7 +213,38 @@ export default function LostPetRegister() {
                   <FormItem>
                     <FormLabel>사례금 (만원 단위)</FormLabel>
                     <FormControl>
-                      <Input placeholder="사례금을 입력해 주세요. ex) 10만원 - 10 입력" {...field} />
+                    <div className="flex gap-2">
+                    <Select
+                      onValueChange={(value: "reward" | "negotiable" | "none") => {
+                        setGratuity(value);
+                        // 선택된 값에 따라 적절한 값을 넘김
+                        if (value === "negotiable") {
+                          field.onChange("-1");
+                        } else if (value === "none") {
+                          field.onChange("0");
+                        } else {
+                          field.onChange(""); // "reward" 선택 시 빈 값 (사용자 입력을 기다림)
+                        }
+                      }}
+                    >
+                          <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="선택" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="negotiable">협의</SelectItem>
+                            <SelectItem value="none">없음</SelectItem>
+                            <SelectItem value="reward">사례금</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {gratuity === "reward" && (
+                          <Input
+                            type="number"
+                            placeholder="사례금 입력 (만원)"
+                            {...field}
+                            onChange={(e) => field.onChange(String(e.target.value))} // 입력값을 숫자로 변환하여 저장
+                          />
+                        )}
+                    </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -195,12 +252,35 @@ export default function LostPetRegister() {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-3 gap-6">
+            <FormField
+                control={form.control}
+                name="missingAnimalStatus"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>구분</FormLabel>
+                    <FormControl>
+                    <div className="flex gap-2">
+                      <Select onValueChange={(value) => field.onChange(value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="선택" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="SEARCHING">실종</SelectItem>
+                          <SelectItem value="SEEN">목격</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="time"
                 render={({ field }) => (
-                  <FormItem className="flex flex-col">
+                  <FormItem className="flex flex-col gap-2">
                     <FormLabel className="text-left">실종 시간</FormLabel>
                     <Popover>
                       <FormControl>

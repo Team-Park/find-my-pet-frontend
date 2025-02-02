@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MapFirst } from "@/app/_components/MapFirst";
-import { formatDateToKorean } from "@/lib/utils";
+import { formatDateToKorean, parseGratuityValue } from "@/lib/utils";
 
 import DetailSkeleton from "@/app/_components/skeleton/DetailSkeleton";
 import {
@@ -35,6 +35,7 @@ interface ILost{
   title: string;
   isMine: boolean;
   openChatUrl: string;
+  missingAnimalStatus: "SEARCHING" | "FOUND" | "SEEN";
 }
 
 export default function LostDetail({ params }: { params: { id: string } }) {
@@ -56,18 +57,17 @@ export default function LostDetail({ params }: { params: { id: string } }) {
     router.push('/')
   }
 
-  console.log(post)
   if(!post) return <DetailSkeleton/>
   return (
     <div className="w-full h-full mb-[100px]">
-      <div className="w-full flex justify-between mb-[50px]">
+      <div className="w-full flex justify-between mb-4">
         <Link href="/">
           <Button size="icon">
             <ArrowLeft />
           </Button>
         </Link>
         <div className="flex gap-2 items-center">
-           {post.openChatUrl !== "undefined" && <Link target="_blank" href={post.openChatUrl}><Button className="flex gap-2 items-center"><span>오픈 채팅</span> <SquareArrowOutUpRight size={16}/></Button></Link>}
+           {post.openChatUrl !== null && <Link target="_blank" href={post.openChatUrl}><Button className="flex gap-2 items-center"><span>오픈 채팅</span> <SquareArrowOutUpRight size={16}/></Button></Link>}
           {
             post.isMine &&
             <div className="flex gap-2">
@@ -77,7 +77,7 @@ export default function LostDetail({ params }: { params: { id: string } }) {
           }
         </div>
       </div>
-
+      {post.missingAnimalStatus === "FOUND" && <div className="w-full flex justify-center items-center bg-gray-300 py-4 my-4 rounded-md font-bold">완료된 게시물입니다.</div>}
       <div className="flex flex-col w-full h-full gap-10">
         <div className="flex w-full sm:justify-between sm:flex-row sm:items-start items-center flex-col gap-6">
           {
@@ -112,7 +112,7 @@ export default function LostDetail({ params }: { params: { id: string } }) {
             </div>
             <div className="flex justify-between items-center w-[300px]">
               <span>연락처</span>
-              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{post.phoneNum}</div>
+              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{post.missingAnimalStatus === "FOUND" ? "-" : post.phoneNum}</div>
             </div>
             <div className="flex justify-between items-center w-[300px]">
               <span>위치</span>
@@ -126,7 +126,7 @@ export default function LostDetail({ params }: { params: { id: string } }) {
             </div>
             <div className="flex justify-between items-center w-[300px]">
               <span>사례금</span>
-              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{post.gratuity}만원</div>
+              <div className="w-[250px] h-[50px] rounded-md bg-gray-100 flex justify-center items-center p-2 text-sm ">{parseGratuityValue(post.gratuity, post.missingAnimalStatus)}</div>
             </div>
           </div>
         </div>
