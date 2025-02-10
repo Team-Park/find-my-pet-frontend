@@ -21,7 +21,6 @@ export default function LostPagination({currentPage, setCurrentPage, totalCount}
         { length: Math.min(5, totalPages - (Math.floor((currentPage - 1) / 5) * 5)) },
         (_, i) => 1 + i + Math.floor((currentPage - 1) / 5) * 5
     );
-    console.log(totalPages, currentPage)
 
     return (
         <Pagination className="my-4">

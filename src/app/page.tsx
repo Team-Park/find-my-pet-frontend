@@ -33,7 +33,7 @@ export default function Home() {
   useEffect(() => {
     if(!LocalStorage.getItem('rt')){
       setLogout()
-      console.log('here-2')
+  
         LocalStorage.removeItem('at')
         LocalStorage.removeItem('rt')
         LocalStorage.removeItem('email')
