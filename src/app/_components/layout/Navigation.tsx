@@ -34,6 +34,9 @@ export default function Navigation() {
           Find My Pet
         </div>
         <div className="flex gap-6">
+          <Button variant="outline">
+            <Link href="/posts">자료실</Link>
+          </Button>
           {
               isLogin ? 
               <Popover>
