@@ -337,7 +337,6 @@ export default function Leaflet(){
                                             <Button type="button" size="lg" variant="default" onClick={async () => {
                                                     // 유효성 검사 실행
                                                     const isValid = await form.trigger();
-                                                    console.log(isValid)
                                                     if (isValid) {
                                                     // 유효하면 현재 값을 가져와 onSubmit 호출
                                                     const values = form.getValues();
