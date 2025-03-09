@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "postbuild": "next-sitemap",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -31,7 +30,6 @@
     "next": "14.2.13",
     "next-mdx-remote": "^5.0.0",
     "next-seo": "^6.6.0",
-    "next-sitemap": "^4.2.3",
     "next-themes": "^0.3.0",
     "plaiceholder": "^3.0.0",
     "qrcode.react": "^4.1.0",
