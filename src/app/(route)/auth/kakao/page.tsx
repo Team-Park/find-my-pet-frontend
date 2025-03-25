@@ -15,19 +15,28 @@ export default function KakaoAuth({ searchParams }: { searchParams: { accessToke
   const setLogin = useIsLoginStore((state) => state.setLogin)
 
   useEffect(() => {
-          LocalStorage.setItem('at', JSON.stringify(searchParams.accessToken))
-          LocalStorage.setItem('rt', JSON.stringify(searchParams.refreshToken))
-          const getUserInfo = async () => {
-             await apiClient.get('/user/me').then((res) => {
-              LocalStorage.setItem('email', JSON.stringify(res.data.data.email))
-              LocalStorage.setItem('name', JSON.stringify(res.data.data.name))
-              LocalStorage.setItem('role', JSON.stringify(res.data.data.role))
-             })
-          }
-          getUserInfo()
-          setLogin()
-          router.push('/')
-    }, []);
+    const init = async () => {
+      LocalStorage.setItem('at', JSON.stringify(searchParams.accessToken))
+      LocalStorage.setItem('rt', JSON.stringify(searchParams.refreshToken))
+  
+      try {
+        const res = await apiClient.get('/user/me')
+        LocalStorage.setItem('email', JSON.stringify(res.data.data.email))
+        LocalStorage.setItem('name', JSON.stringify(res.data.data.name))
+        LocalStorage.setItem('role', JSON.stringify(res.data.data.role))
+  
+        setLogin()
+        router.push('/')
+      } catch (err) {
+        console.error('유저 정보 요청 실패', err)
+        LocalStorage.removeItem('at')
+        LocalStorage.removeItem('rt')
+        router.push('/')
+      }
+    }
+  
+    init()
+  }, [])
 
   return (
   <div className="flex flex-col  w-full items-center gap-6">
