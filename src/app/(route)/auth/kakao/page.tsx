@@ -15,6 +15,8 @@ export default function KakaoAuth({ searchParams }: { searchParams: { accessToke
   const setLogin = useIsLoginStore((state) => state.setLogin)
 
   useEffect(() => {
+          LocalStorage.setItem('at', JSON.stringify(searchParams.accessToken))
+          LocalStorage.setItem('rt', JSON.stringify(searchParams.refreshToken))
           const getUserInfo = async () => {
              await apiClient.get('/user/me').then((res) => {
               LocalStorage.setItem('email', JSON.stringify(res.data.data.email))
@@ -23,8 +25,6 @@ export default function KakaoAuth({ searchParams }: { searchParams: { accessToke
              })
           }
           getUserInfo()
-          LocalStorage.setItem('at', JSON.stringify(searchParams.accessToken))
-          LocalStorage.setItem('rt', JSON.stringify(searchParams.refreshToken))
           setLogin()
           router.push('/')
     }, []);
