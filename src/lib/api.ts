@@ -20,7 +20,7 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.request.use(
   (config) => {
     const token = LocalStorage.getItem('at')?.replace(/"/g, '');
-    
+    const token_test = LocalStorage.getItem('rt')?.replace(/"/g, '');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

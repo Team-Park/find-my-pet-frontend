@@ -7,7 +7,7 @@ const nextConfig = {
         hostname: "github.com",
       },
     ],
-    domains: ["www.animal.go.kr", "d3vt348duxk7vk.cloudfront.net"],
+    domains: ["www.animal.go.kr", "d3vt348duxk7vk.cloudfront.net", "cdn.platformholder.site"],
   },
 };
 
