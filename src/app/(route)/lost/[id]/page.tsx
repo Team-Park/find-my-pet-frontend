@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/app/_components/ui/button";
-import { ArrowLeft, SquareArrowOutUpRight } from "lucide-react";
+import { ArrowLeft, Printer, SquareArrowOutUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,6 +10,8 @@ import TimePhaseBanner from "@/app/_components/lost/TimePhaseBanner";
 import LongTermGuideBlock from "@/app/_components/lost/LongTermGuideBlock";
 import SimilarCandidatesSection from "@/app/_components/lost/SimilarCandidatesSection";
 import FlyerManagementSection from "@/app/_components/lost/FlyerManagementSection";
+import SightingSection from "@/app/_components/lost/SightingSection";
+import FlyerPrintDialog from "@/app/_components/lost/FlyerPrintDialog";
 import type { AnimalType } from "@/types/breed";
 import { formatDateToKorean, parseGratuityValue } from "@/lib/utils";
 
@@ -80,6 +82,19 @@ export default function LostDetail({ params }: { params: { id: string } }) {
           {
             post.isMine &&
             <div className="flex gap-2">
+              <FlyerPrintDialog
+                postId={params.id}
+                title={post.title}
+                description={post.description}
+                phoneNum={post.phoneNum}
+                place={post.place}
+                time={post.time}
+                thumbnail={post.imageUrls?.[0]?.image}
+                gratuity={post.gratuity}
+                missingAnimalStatus={post.missingAnimalStatus}
+              >
+                <Button variant="outline" className="flex gap-2 items-center"><Printer size={16}/><span>전단지 QR</span></Button>
+              </FlyerPrintDialog>
               <Button onClick={() => router.push(`/edit/${params.id}`)}>수정</Button>
               <Button variant="destructive" onClick={() => removePost(params.id)}>삭제</Button>
             </div>
@@ -168,6 +183,13 @@ export default function LostDetail({ params }: { params: { id: string } }) {
         </div>
 
         <LongTermGuideBlock missingTime={post.time} place={post.place} />
+
+        {post.coordinate && (
+          <SightingSection
+            postId={params.id}
+            center={{ lat: post.coordinate.lat, lng: post.coordinate.lng }}
+          />
+        )}
 
         {post.isMine && post.coordinate && (
           <FlyerManagementSection
