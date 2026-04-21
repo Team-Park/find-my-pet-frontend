@@ -36,3 +36,28 @@ export function removeCookie(name: string): void {
 // 쿠키 이름 상수 — 프로젝트 전역에서 재사용
 export const COOKIE_ACCESS_TOKEN = "accessToken";
 export const COOKIE_REFRESH_TOKEN = "refreshToken";
+
+/**
+ * LocalStorage 기반 토큰(`at`, `rt`) → Cookie 1회성 마이그레이션.
+ *
+ * 2026-04-21 Cookie 전환 이전 로그인 세션 유지 목적. 쿠키에 값이 있으면 no-op.
+ * 과거 값이 `JSON.stringify` 로 래핑되어 있던 케이스 대비 따옴표 제거.
+ */
+export function migrateLegacyLocalStorageTokens(): void {
+  if (typeof window === "undefined") return;
+  if (getCookie(COOKIE_ACCESS_TOKEN)) return;
+
+  try {
+    const rawAt = window.localStorage.getItem("at");
+    const rawRt = window.localStorage.getItem("rt");
+    if (!rawAt || !rawRt) return;
+
+    const unwrap = (v: string): string => v.replace(/^"+|"+$/g, "");
+    setCookie(COOKIE_ACCESS_TOKEN, unwrap(rawAt));
+    setCookie(COOKIE_REFRESH_TOKEN, unwrap(rawRt));
+    window.localStorage.removeItem("at");
+    window.localStorage.removeItem("rt");
+  } catch {
+    // 프라이빗 브라우징 등에서 LocalStorage 접근 실패 시 조용히 무시
+  }
+}

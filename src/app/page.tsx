@@ -16,6 +16,7 @@ import {
   COOKIE_ACCESS_TOKEN,
   COOKIE_REFRESH_TOKEN,
   getCookie,
+  migrateLegacyLocalStorageTokens,
   removeCookie,
 } from "@/lib/cookieUtils";
 
@@ -37,6 +38,9 @@ export default function Home() {
   }
 
   useEffect(() => {
+    // Cookie 전환 이전 LocalStorage 토큰을 1회성 이관
+    migrateLegacyLocalStorageTokens()
+
     if(!getCookie(COOKIE_REFRESH_TOKEN)){
       setLogout()
       removeCookie(COOKIE_ACCESS_TOKEN)
