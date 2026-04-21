@@ -45,19 +45,27 @@ export const COOKIE_REFRESH_TOKEN = "refreshToken";
  */
 export function migrateLegacyLocalStorageTokens(): void {
   if (typeof window === "undefined") return;
-  if (getCookie(COOKIE_ACCESS_TOKEN)) return;
+  const existing = getCookie(COOKIE_ACCESS_TOKEN);
+  if (existing) {
+    console.info("[fmp:auth] cookie token present, skip migration");
+    return;
+  }
 
   try {
     const rawAt = window.localStorage.getItem("at");
     const rawRt = window.localStorage.getItem("rt");
-    if (!rawAt || !rawRt) return;
+    if (!rawAt || !rawRt) {
+      console.info("[fmp:auth] no legacy LocalStorage tokens to migrate");
+      return;
+    }
 
     const unwrap = (v: string): string => v.replace(/^"+|"+$/g, "");
     setCookie(COOKIE_ACCESS_TOKEN, unwrap(rawAt));
     setCookie(COOKIE_REFRESH_TOKEN, unwrap(rawRt));
     window.localStorage.removeItem("at");
     window.localStorage.removeItem("rt");
-  } catch {
-    // 프라이빗 브라우징 등에서 LocalStorage 접근 실패 시 조용히 무시
+    console.info("[fmp:auth] migrated LocalStorage tokens → cookie");
+  } catch (e) {
+    console.warn("[fmp:auth] migration failed", e);
   }
 }
