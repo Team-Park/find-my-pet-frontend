@@ -9,6 +9,12 @@ import LocalStorage from "@/lib/localStorage";
 import { useEffect } from "react";
 import useIsLoginStore from "@/store/loginStore";
 import Link from "next/link";
+import {
+  COOKIE_ACCESS_TOKEN,
+  COOKIE_REFRESH_TOKEN,
+  getCookie,
+  removeCookie,
+} from "@/lib/cookieUtils";
 
 export default function Navigation() {
   const router = useRouter();
@@ -17,7 +23,7 @@ export default function Navigation() {
   const setLogout = useIsLoginStore((state) => state.setLogout)
 
  useEffect(() => {
-  if(LocalStorage.getItem('at')) {
+  if(getCookie(COOKIE_ACCESS_TOKEN)) {
     setLogin()
   }
   else {
@@ -50,8 +56,8 @@ export default function Navigation() {
                   <div className="w-[120px] p-3 shadow-lg z-50 rounded-md bg-gray-50 flex flex-col gap-3">
                     <Button variant="outline" className="font-bold"><Link href="/profile">마이페이지</Link></Button>
                     <Button variant="outline" className="font-bold" onClick={() => {
-                      LocalStorage.removeItem('at')
-                      LocalStorage.removeItem('rt')
+                      removeCookie(COOKIE_ACCESS_TOKEN)
+                      removeCookie(COOKIE_REFRESH_TOKEN)
                       LocalStorage.removeItem('email')
                       LocalStorage.removeItem('name')
                       LocalStorage.removeItem('role')

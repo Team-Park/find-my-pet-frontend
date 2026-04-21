@@ -1,94 +1,88 @@
-import { BASE_URL } from '@/app/constant/api';
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import LocalStorage from './localStorage';
-
+import { BASE_URL } from "@/app/constant/api";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
+import {
+  COOKIE_ACCESS_TOKEN,
+  COOKIE_REFRESH_TOKEN,
+  getCookie,
+  removeCookie,
+  setCookie,
+} from "./cookieUtils";
 
 let isRefreshing = false;
-let refreshedTokenPromise: Promise<{accessToken: string; refreshToken: string}> | null = null;
+let refreshedTokenPromise: Promise<{ accessToken: string; refreshToken: string }> | null = null;
 
-
-// Axios 인스턴스 생성
 const apiClient: AxiosInstance = axios.create({
-  baseURL: BASE_URL, // 기본 API URL
-  timeout: 5000, // 요청 타임아웃: 5000ms (5초)
+  baseURL: BASE_URL,
+  timeout: 5000,
+  withCredentials: true, // 쿠키 자동 전송 (향후 HttpOnly 전환 대비)
   headers: {
-    'Content-Type': 'application/json', // 기본 Content-Type 설정
+    "Content-Type": "application/json",
   },
 });
 
-// 요청 인터셉터 (Optional: 요청 전 실행)
+// 요청 인터셉터 — 쿠키의 access token 을 Authorization 헤더에 이중 부착
 apiClient.interceptors.request.use(
   (config) => {
-    const token = LocalStorage.getItem('at')?.replace(/"/g, '');
-    const token_test = LocalStorage.getItem('rt')?.replace(/"/g, '');
+    const token = getCookie(COOKIE_ACCESS_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error),
 );
 
-// 응답 인터셉터: 401 에러 처리
+// 응답 인터셉터 — 401/403 에서 refresh 재시도. find-my-pet 백엔드는 현재 403 사용, 호환 위해 둘 다.
 apiClient.interceptors.response.use(
-    (response: AxiosResponse) => {
-      return response;
-    },
-    async (error) => {
-      const {
-        config,
-        response: { status },
-      } = error;
-      if (status === 403 && !isRefreshing) {
-        isRefreshing = true;
-        const originalRequest = config;
-        const refreshToken = LocalStorage.getItem('rt')?.replace(/"/g, '');;
-        const body = {
-            refreshToken: refreshToken
-        }
-        refreshedTokenPromise = axios.post(`${BASE_URL}/auth/reissue`, body)
-          .then((res) => {
-            isRefreshing = false;
-            refreshedTokenPromise = null;
-            return res.data.data;
-          })
-          .catch((err) => {
-            isRefreshing = false;
-            // 재발급 요청에 대한 권한이 없음
-            window.location.href = '/'
-            LocalStorage.removeItem('at')
-            LocalStorage.removeItem('rt')
-            if (err.response.status === 403) {
-              // 로그아웃 로직
-            }
-            return Promise.reject(err);
-          });
-  
-        const newToken = await refreshedTokenPromise;
-  
-        if (newToken) {
-          config.headers.Authorization = newToken.accessToken;
-          LocalStorage.setItem('at', newToken.accessToken)
-          LocalStorage.setItem('rt', newToken.refreshToken)
-        }
-  
-        // '최초 만료 요청'
-        return apiClient(originalRequest);
+  (response: AxiosResponse) => response,
+  async (error) => {
+    const { config, response } = error;
+    const status = response?.status;
+    if ((status === 401 || status === 403) && !isRefreshing) {
+      isRefreshing = true;
+      const originalRequest = config;
+      const refreshToken = getCookie(COOKIE_REFRESH_TOKEN);
+      if (!refreshToken) {
+        isRefreshing = false;
+        return Promise.reject(error);
       }
-  
-    //   이전에 토큰 갱신을 시도했지만 아직 완료되지 않았을 때
-      if (status === 403 && isRefreshing) {
-        // 요청 대기
-        const newToken = await refreshedTokenPromise;
-        if (newToken) {
-          config.headers.Authorization = newToken;
-        }
-        // 대기 요청 처리
-        return apiClient(config);
+      refreshedTokenPromise = axios
+        .post(`${BASE_URL}/auth/reissue`, { refreshToken }, { withCredentials: true })
+        .then((res) => {
+          isRefreshing = false;
+          const { accessToken, refreshToken: newRefresh } = res.data.data;
+          setCookie(COOKIE_ACCESS_TOKEN, accessToken);
+          if (newRefresh) setCookie(COOKIE_REFRESH_TOKEN, newRefresh);
+          refreshedTokenPromise = null;
+          return { accessToken, refreshToken: newRefresh ?? refreshToken };
+        })
+        .catch((err) => {
+          isRefreshing = false;
+          refreshedTokenPromise = null;
+          removeCookie(COOKIE_ACCESS_TOKEN);
+          removeCookie(COOKIE_REFRESH_TOKEN);
+          if (typeof window !== "undefined") {
+            window.location.href = "/";
+          }
+          return Promise.reject(err);
+        });
+      const newToken = await refreshedTokenPromise;
+      if (newToken) {
+        originalRequest.headers.Authorization = `Bearer ${newToken.accessToken}`;
       }
-      return Promise.reject(error);
+      return apiClient(originalRequest);
     }
-  );
+
+    // 이미 재발급 중인 요청은 대기 후 재시도
+    if ((status === 401 || status === 403) && isRefreshing) {
+      const newToken = await refreshedTokenPromise;
+      if (newToken) {
+        config.headers.Authorization = `Bearer ${newToken.accessToken}`;
+      }
+      return apiClient(config);
+    }
+    return Promise.reject(error);
+  },
+);
+
 export default apiClient;

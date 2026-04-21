@@ -12,6 +12,12 @@ import { useToast } from "@/hooks/use-toast";
 import LostList from "./_components/main/LostList";
 import LocalStorage from "@/lib/localStorage";
 import useIsLoginStore from "@/store/loginStore";
+import {
+  COOKIE_ACCESS_TOKEN,
+  COOKIE_REFRESH_TOKEN,
+  getCookie,
+  removeCookie,
+} from "@/lib/cookieUtils";
 
 export default function Home() {
   const [activeTabValue, setActiveTabValue] = useState<"lost" | "abandonment">("lost");
@@ -31,14 +37,13 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if(!LocalStorage.getItem('rt')){
+    if(!getCookie(COOKIE_REFRESH_TOKEN)){
       setLogout()
-  
-        LocalStorage.removeItem('at')
-        LocalStorage.removeItem('rt')
-        LocalStorage.removeItem('email')
-        LocalStorage.removeItem('name')
-        LocalStorage.removeItem('role')
+      removeCookie(COOKIE_ACCESS_TOKEN)
+      removeCookie(COOKIE_REFRESH_TOKEN)
+      LocalStorage.removeItem('email')
+      LocalStorage.removeItem('name')
+      LocalStorage.removeItem('role')
       toast({
         title: "로그인이 만료되었습니다.",
         description: "로그인이 필요합니다.",

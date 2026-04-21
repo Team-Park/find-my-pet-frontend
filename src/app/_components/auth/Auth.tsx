@@ -10,6 +10,11 @@ import LocalStorage from "@/lib/localStorage";
 import useIsLoginStore from "@/store/loginStore";
 import { Spinner } from "@/components/ui/spinner";
 import apiClient from "@/lib/api";
+import {
+  COOKIE_ACCESS_TOKEN,
+  COOKIE_REFRESH_TOKEN,
+  setCookie,
+} from "@/lib/cookieUtils";
 
 
 const Auth = ({accessToken, refreshToken}: {accessToken: string; refreshToken: string;}) => {
@@ -17,17 +22,18 @@ const Auth = ({accessToken, refreshToken}: {accessToken: string; refreshToken: s
   const setLogin = useIsLoginStore((state) => state.setLogin)
 
   useEffect(() => {
-        
-          LocalStorage.setItem('at', accessToken)
-          LocalStorage.setItem('rt', refreshToken)
+          // 토큰은 쿠키로 저장 (withCredentials + Authorization 양쪽 전송)
+          setCookie(COOKIE_ACCESS_TOKEN, accessToken)
+          setCookie(COOKIE_REFRESH_TOKEN, refreshToken)
           const getUserInfo = async () => {
              await apiClient.get('/user/me').then((res) => {
+              // 사용자 프로필은 민감정보 아니므로 LocalStorage 유지
               LocalStorage.setItem('email', JSON.stringify(res.data.data.email))
               LocalStorage.setItem('name', JSON.stringify(res.data.data.name))
               LocalStorage.setItem('role', JSON.stringify(res.data.data.role))
              })
           }
-          
+
           getUserInfo()
           setLogin()
           router.push('/')
