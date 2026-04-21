@@ -39,6 +39,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import apiClient from "@/lib/api";
 import LocalStorage from "@/lib/localStorage";
+import BreedSelect from "@/app/_components/BreedSelect";
+import type { AnimalType } from "@/types/breed";
 
 const formSchema = z.object({
   title: z.string()
@@ -69,6 +71,8 @@ const formSchema = z.object({
   chatURL: z.any(),
   customNickname: z.any(),
   missingAnimalStatus: z.any(),
+  animalType: z.enum(["DOG", "CAT", "OTHER"]).default("DOG"),
+  breedId: z.string().nullable().optional(),
 });
 
 export default function LostPetRegister() {
@@ -76,7 +80,7 @@ export default function LostPetRegister() {
   const {toast} = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { title: "" },
+    defaultValues: { title: "", animalType: "DOG", breedId: null },
   });
   const [gratuity, setGratuity] = useState<"reward"|"negotiable"|"none">("none");
   const watchValues = form.watch(); // 입력 값 모니터링
@@ -130,15 +134,19 @@ export default function LostPetRegister() {
       gratuity: values.gratuity,
       description: values.description,
       missingAnimalStatus: values.missingAnimalStatus,
+      animalType: values.animalType ?? "DOG",
       lat: "1",
       lng: "1",
     });
-  
+
     if (values.customNickname) {
       queryParams.append("customNickname", values.customNickname);
     }
     if (values.chatURL) {
       queryParams.append("openChatUrl", values.chatURL);
+    }
+    if (values.breedId) {
+      queryParams.append("breedId", values.breedId);
     }
 
     // 3. API 호출
@@ -171,6 +179,59 @@ export default function LostPetRegister() {
                   <FormLabel>제목</FormLabel>
                   <FormControl>
                     <Input placeholder="글의 제목을 입력해 주세요." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="animalType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>동물 종</FormLabel>
+                  <FormControl>
+                    <div className="flex gap-2">
+                      {(["DOG", "CAT", "OTHER"] as AnimalType[]).map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          className={`px-4 py-2 rounded-md text-sm border ${
+                            field.value === t
+                              ? "bg-blue-500 text-white border-blue-500"
+                              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                          }`}
+                          onClick={() => {
+                            field.onChange(t);
+                            form.setValue("breedId", null);
+                          }}
+                        >
+                          {t === "DOG" ? "개" : t === "CAT" ? "고양이" : "기타"}
+                        </button>
+                      ))}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="breedId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    품종
+                    <span className="text-xs text-gray-400 ml-1">(선택)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <BreedSelect
+                      animalType={(form.watch("animalType") as AnimalType) ?? "DOG"}
+                      value={field.value ?? null}
+                      onChange={(id) => field.onChange(id)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

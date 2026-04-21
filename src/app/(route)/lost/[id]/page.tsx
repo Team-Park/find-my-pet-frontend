@@ -5,6 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MapFirst } from "@/app/_components/MapFirst";
+import SearchRadiusMap from "@/app/_components/lost/SearchRadiusMap";
+import TimePhaseBanner from "@/app/_components/lost/TimePhaseBanner";
+import LongTermGuideBlock from "@/app/_components/lost/LongTermGuideBlock";
+import SimilarCandidatesSection from "@/app/_components/lost/SimilarCandidatesSection";
+import type { AnimalType } from "@/types/breed";
 import { formatDateToKorean, parseGratuityValue } from "@/lib/utils";
 
 import DetailSkeleton from "@/app/_components/skeleton/DetailSkeleton";
@@ -36,6 +41,9 @@ interface ILost{
   isMine: boolean;
   openChatUrl: string;
   missingAnimalStatus: "SEARCHING" | "FOUND" | "SEEN";
+  coordinate?: { lat: number; lng: number };
+  animalType?: AnimalType;
+  breedId?: string | null;
 }
 
 export default function LostDetail({ params }: { params: { id: string } }) {
@@ -135,20 +143,32 @@ export default function LostDetail({ params }: { params: { id: string } }) {
           💡 {post.description}
         </div>
 
-        <div className="w-full h-[400px] flex flex-col bg-gray-100 rounded-md">
-        <div className="flex-col flex grow-1 rounded-t-md p-2 gap-1">
-            <h1 className="font-bold">📍 실종 정보</h1>
-            <div className="grid grid-cols-2 w-full gap-4">
-              <div className="flex flex-col">
-                <h1 className="font-bold text-sm">실종 위치</h1>
-                <span className="text-sm">{post.place}</span>
-              </div>
+        <TimePhaseBanner missingTime={post.time} />
+
+        <div className="w-full flex flex-col bg-gray-50 rounded-md p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h1 className="font-bold">📍 탐색 범위</h1>
+            <span className="text-xs text-gray-500">{post.place}</span>
+          </div>
+          {post.coordinate ? (
+            <SearchRadiusMap
+              lat={post.coordinate.lat}
+              lng={post.coordinate.lng}
+              missingTime={post.time}
+              animalType={post.animalType ?? "DOG"}
+              breedId={post.breedId}
+              postId={params.id}
+            />
+          ) : (
+            <div className="w-full h-[400px]">
+              <MapFirst address={post.place} />
             </div>
-          </div>
-          <div className="w-full h-full">
-            <MapFirst address={post.place}/>
-          </div>
+          )}
         </div>
+
+        <LongTermGuideBlock missingTime={post.time} place={post.place} />
+
+        <SimilarCandidatesSection postId={params.id} />
       </div>
     </div>
   );
