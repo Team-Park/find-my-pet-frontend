@@ -40,6 +40,8 @@ import apiClient from "@/lib/api";
 import useLostPet from "@/store/lostPetStore";
 import LocalStorage from "@/lib/localStorage";
 import { useState } from "react";
+import BreedSelect from "@/app/_components/BreedSelect";
+import type { AnimalType } from "@/types/breed";
 
 
 const formSchema = z.object({
@@ -70,7 +72,8 @@ const formSchema = z.object({
   }),
   chatURL: z.any(),
   customNickname: z.any(),
-  
+  animalType: z.enum(["DOG", "CAT", "OTHER"]).default("DOG"),
+  breedId: z.string().nullable().optional(),
 });
 export default function LostPetRegister({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -79,7 +82,7 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
   const lostPetInfo = useLostPet((state) => state.lostPet)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { 
+    defaultValues: {
       title: lostPetInfo?.title,
       phoneNum: lostPetInfo?.phoneNum,
       gratuity: String(lostPetInfo?.gratuity),
@@ -87,7 +90,9 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
       description: lostPetInfo?.description,
       place: lostPetInfo?.place,
       chatURL: lostPetInfo?.chatURL,
-      customNickname: lostPetInfo?.customNickname
+      customNickname: lostPetInfo?.customNickname,
+      animalType: lostPetInfo?.animalType ?? "DOG",
+      breedId: lostPetInfo?.breedId ?? null,
     },
   });
   const ID = params.id
@@ -96,7 +101,15 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
   const watchValues = form.watch(); // 입력 값 모니터링
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const body = {...values, postId: ID, lat:0, lng:0, missingAnimalStatus: lostPetInfo?.missingAnimalStatus }
+    const body = {
+      ...values,
+      postId: ID,
+      lat: lostPetInfo?.lat ?? 0,
+      lng: lostPetInfo?.lng ?? 0,
+      missingAnimalStatus: lostPetInfo?.missingAnimalStatus,
+      animalType: values.animalType ?? lostPetInfo?.animalType ?? "DOG",
+      breedId: values.breedId ?? null,
+    }
     // 3. API 호출
     await apiClient.put(
       `/post`, body)
@@ -122,6 +135,59 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
                   <FormLabel>제목</FormLabel>
                   <FormControl>
                     <Input placeholder="글의 제목을 입력해 주세요." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="animalType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>동물 종</FormLabel>
+                  <FormControl>
+                    <div className="flex gap-2">
+                      {(["DOG", "CAT", "OTHER"] as AnimalType[]).map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          className={`px-4 py-2 rounded-md text-sm border ${
+                            field.value === t
+                              ? "bg-blue-500 text-white border-blue-500"
+                              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                          }`}
+                          onClick={() => {
+                            field.onChange(t);
+                            form.setValue("breedId", null);
+                          }}
+                        >
+                          {t === "DOG" ? "개" : t === "CAT" ? "고양이" : "기타"}
+                        </button>
+                      ))}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="breedId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    품종
+                    <span className="text-xs text-gray-400 ml-1">(선택)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <BreedSelect
+                      animalType={(form.watch("animalType") as AnimalType) ?? "DOG"}
+                      value={field.value ?? null}
+                      onChange={(id) => field.onChange(id)}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

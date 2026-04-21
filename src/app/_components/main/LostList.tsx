@@ -7,50 +7,86 @@ import Link from "next/link";
 import apiClient from "@/lib/api";
 import LostPagination from "../LostPagination";
 import { ITEM_PER_PAGE } from "@/app/constant/constant";
+import NearbyFilter, { type NearbySetting } from "./NearbyFilter";
 
 export interface ILostPet {
-    author: string;
-    gratuity: number;
-    id: string;
-    place: string;
-    thumbnail: string;
-    time: string;
-    title: string;
-    description: string;
-    missingAnimalStatus: "SEARCHING" | "FOUND" | "SEEN";
+  author: string;
+  gratuity: number;
+  id: string;
+  place: string;
+  thumbnail: string;
+  time: string;
+  title: string;
+  description: string;
+  missingAnimalStatus: "SEARCHING" | "FOUND" | "SEEN";
+  distanceKm?: number;
 }
 
 export default function LostList() {
-  const [lostPetList, setLostPetList] = useState([]);
+  const [lostPetList, setLostPetList] = useState<ILostPet[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [nearby, setNearby] = useState<NearbySetting>({ enabled: false });
+
   useEffect(() => {
-    const getPosts = async() => {
-        setIsLoading(true)
-        const res = await apiClient.get(`/posts?pageSize=${ITEM_PER_PAGE}&pageOffset=${((currentPage-1))}&orderBy=CREATED_AT_DESC`)
-        setLostPetList(res.data.data.contents)
-        setTotalCount(res.data.data.totalCount)
+    const getPosts = async () => {
+      setIsLoading(true);
+      try {
+        if (nearby.enabled) {
+          const res = await apiClient.get(`/posts/nearby`, {
+            params: {
+              lat: nearby.lat,
+              lng: nearby.lng,
+              radiusKm: nearby.radiusKm,
+              pageSize: ITEM_PER_PAGE,
+              pageOffset: currentPage - 1,
+            },
+          });
+          setLostPetList(res.data?.data?.contents ?? []);
+          setTotalCount(res.data?.data?.totalCount ?? 0);
+        } else {
+          const res = await apiClient.get(
+            `/posts?pageSize=${ITEM_PER_PAGE}&pageOffset=${currentPage - 1}&orderBy=CREATED_AT_DESC`,
+          );
+          setLostPetList(res.data?.data?.contents ?? []);
+          setTotalCount(res.data?.data?.totalCount ?? 0);
+        }
+      } catch {
+        setLostPetList([]);
+        setTotalCount(0);
+      } finally {
         setIsLoading(false);
-    }
-    getPosts()
-}, [currentPage])
+      }
+    };
+    getPosts();
+  }, [currentPage, nearby]);
+
   return (
     <div className="w-full flex flex-col justify-center">
+      <NearbyFilter
+        value={nearby}
+        onChange={(v) => {
+          setCurrentPage(1);
+          setNearby(v);
+        }}
+      />
       <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
-        {isLoading ? 
-          <PetListSkeleton/>
-          :
-          lostPetList.map((pet: ILostPet) => {
-            return (
-                <Link href={`/lost/${pet.id}`} key={pet.id}>
-                  <LostCard {...pet} />
-                </Link>
-              );
-          })
-        }
+        {isLoading ? (
+          <PetListSkeleton />
+        ) : (
+          lostPetList.map((pet) => (
+            <Link href={`/lost/${pet.id}`} key={pet.id}>
+              <LostCard {...pet} />
+            </Link>
+          ))
+        )}
       </div>
-      <LostPagination currentPage={currentPage} setCurrentPage={setCurrentPage} totalCount={totalCount}/>
+      <LostPagination
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        totalCount={totalCount}
+      />
     </div>
   );
 }

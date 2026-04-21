@@ -14,6 +14,8 @@ interface ILostPetInfo {
     chatURL: string,
     customNickname: string,
     missingAnimalStatus: "FOUND" | "SEARCHING" | "SEEN",
+    animalType?: "DOG" | "CAT" | "OTHER",
+    breedId?: string | null,
 }
 
 interface ILostPet{

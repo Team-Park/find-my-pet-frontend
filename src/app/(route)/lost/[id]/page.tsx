@@ -9,6 +9,7 @@ import SearchRadiusMap from "@/app/_components/lost/SearchRadiusMap";
 import TimePhaseBanner from "@/app/_components/lost/TimePhaseBanner";
 import LongTermGuideBlock from "@/app/_components/lost/LongTermGuideBlock";
 import SimilarCandidatesSection from "@/app/_components/lost/SimilarCandidatesSection";
+import FlyerManagementSection from "@/app/_components/lost/FlyerManagementSection";
 import type { AnimalType } from "@/types/breed";
 import { formatDateToKorean, parseGratuityValue } from "@/lib/utils";
 
@@ -167,6 +168,13 @@ export default function LostDetail({ params }: { params: { id: string } }) {
         </div>
 
         <LongTermGuideBlock missingTime={post.time} place={post.place} />
+
+        {post.isMine && post.coordinate && (
+          <FlyerManagementSection
+            postId={params.id}
+            center={{ lat: post.coordinate.lat, lng: post.coordinate.lng }}
+          />
+        )}
 
         <SimilarCandidatesSection postId={params.id} />
       </div>
