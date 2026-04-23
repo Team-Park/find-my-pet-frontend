@@ -28,7 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { MapFirst } from "../../_components/MapFirst";
+import CoordinatePicker from "@/app/_components/lost/CoordinatePicker";
 import {
   Popover,
   PopoverContent,
@@ -74,6 +74,8 @@ const formSchema = z.object({
   customNickname: z.any(),
   animalType: z.enum(["DOG", "CAT", "OTHER"]).default("DOG"),
   breedId: z.string().nullable().optional(),
+  lat: z.number({ required_error: "지도에서 실종 위치를 선택해 주세요." }),
+  lng: z.number({ required_error: "지도에서 실종 위치를 선택해 주세요." }),
 });
 export default function LostPetRegister({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -93,6 +95,8 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
       customNickname: lostPetInfo?.customNickname,
       animalType: lostPetInfo?.animalType ?? "DOG",
       breedId: lostPetInfo?.breedId ?? null,
+      lat: typeof lostPetInfo?.lat === "number" ? lostPetInfo.lat : undefined,
+      lng: typeof lostPetInfo?.lng === "number" ? lostPetInfo.lng : undefined,
     },
   });
   const ID = params.id
@@ -104,8 +108,6 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
     const body = {
       ...values,
       postId: ID,
-      lat: lostPetInfo?.lat ?? 0,
-      lng: lostPetInfo?.lng ?? 0,
       missingAnimalStatus: lostPetInfo?.missingAnimalStatus,
       animalType: values.animalType ?? lostPetInfo?.animalType ?? "DOG",
       breedId: values.breedId ?? null,
@@ -353,9 +355,31 @@ export default function LostPetRegister({ params }: { params: { id: string } }) 
                   <FormControl>
                     <Input placeholder="정확한 주소를 입력해 주세요." {...field} />
                   </FormControl>
-                  <div className="w-full h-[300px] bg-blue-200">
-                    <MapFirst address={watchValues.place} />
-                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="lat"
+              render={() => (
+                <FormItem>
+                  <FormLabel>지도에서 위치 선택</FormLabel>
+                  <FormControl>
+                    <CoordinatePicker
+                      value={
+                        typeof watchValues.lat === "number" && typeof watchValues.lng === "number"
+                          ? { lat: watchValues.lat, lng: watchValues.lng }
+                          : null
+                      }
+                      onChange={(lat, lng) => {
+                        form.setValue("lat", lat, { shouldValidate: true });
+                        form.setValue("lng", lng, { shouldValidate: true });
+                      }}
+                      address={watchValues.place}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

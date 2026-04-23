@@ -27,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { TimePicker } from "@/components/ui/TimePicker";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { MapFirst } from "../_components/MapFirst";
+import CoordinatePicker from "@/app/_components/lost/CoordinatePicker";
 import {
   Popover,
   PopoverContent,
@@ -73,6 +73,8 @@ const formSchema = z.object({
   missingAnimalStatus: z.any(),
   animalType: z.enum(["DOG", "CAT", "OTHER"]).default("DOG"),
   breedId: z.string().nullable().optional(),
+  lat: z.number({ required_error: "지도에서 실종 위치를 선택해 주세요." }),
+  lng: z.number({ required_error: "지도에서 실종 위치를 선택해 주세요." }),
 });
 
 export default function LostPetRegister() {
@@ -135,8 +137,8 @@ export default function LostPetRegister() {
       description: values.description,
       missingAnimalStatus: values.missingAnimalStatus,
       animalType: values.animalType ?? "DOG",
-      lat: "1",
-      lng: "1",
+      lat: String(values.lat),
+      lng: String(values.lng),
     });
 
     if (values.customNickname) {
@@ -420,9 +422,31 @@ export default function LostPetRegister() {
                   <FormControl>
                     <Input placeholder="정확한 주소를 입력해 주세요." {...field} />
                   </FormControl>
-                  <div className="w-full h-[300px] bg-blue-200">
-                    <MapFirst address={watchValues.place} />
-                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="lat"
+              render={() => (
+                <FormItem>
+                  <FormLabel>지도에서 위치 선택</FormLabel>
+                  <FormControl>
+                    <CoordinatePicker
+                      value={
+                        typeof watchValues.lat === "number" && typeof watchValues.lng === "number"
+                          ? { lat: watchValues.lat, lng: watchValues.lng }
+                          : null
+                      }
+                      onChange={(lat, lng) => {
+                        form.setValue("lat", lat, { shouldValidate: true });
+                        form.setValue("lng", lng, { shouldValidate: true });
+                      }}
+                      address={watchValues.place}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -466,6 +490,16 @@ export default function LostPetRegister() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>사진</FormLabel>
+                  <div className="rounded-md border border-blue-100 bg-blue-50 p-3 text-xs text-gray-700 space-y-1">
+                    <p className="font-medium text-blue-700">📸 찾을 확률을 높이는 사진 가이드</p>
+                    <ul className="list-disc pl-5 space-y-0.5">
+                      <li><b>정면 얼굴</b> 1장 + <b>전신 측면</b> 1장은 꼭 포함해 주세요. AI 유사도 매칭에 가장 중요합니다.</li>
+                      <li><b>밝은 자연광</b>에서 찍은 최근 사진이 좋아요. 어둡거나 흐릿한 사진은 목격자 식별이 어렵습니다.</li>
+                      <li><b>특징(무늬·흉터·털 색 구분선·목걸이)</b>이 잘 보이도록 가까이서 한 장 더 추가하면 좋아요.</li>
+                      <li>다른 사람·사물과 <b>함께 찍힌 사진</b>이나 <b>얼굴이 가려진 사진</b>은 피해 주세요.</li>
+                      <li>최대 3장까지 업로드할 수 있습니다.</li>
+                    </ul>
+                  </div>
                   <FormControl>
                     <Input
                       id="pictures"
