@@ -5,6 +5,7 @@ import Navigation from "@/app/_components/layout/Navigation";
 import Footer from "@/app/_components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import GoogleAnalytics from "@/lib/GoogleAnalytics";
+import AuthQueryCapture from "@/app/_components/auth/AuthQueryCapture";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,13 +20,14 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "파인드마이펫 | 실종동물 공유게시판",
-  description: "파인드마이펫은 실종된 동물의 정보를 공유하여 찾을 수 있도록 도와주는 커뮤니티입니다. 실종 정보를 등록하고 실종 시 대처 가이드라인을 참고하세요.",
+  description:
+    "파인드마이펫은 실종된 동물의 정보를 공유하여 찾을 수 있도록 도와주는 커뮤니티입니다. 실종 정보를 등록하고 실종 시 대처 가이드라인을 참고하세요.",
   icons: {
-		icon: "../static/image/favicon.png",
-	},
+    icon: "../static/image/favicon.png",
+  },
   verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
-  }
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+  },
 };
 
 export default function RootLayout({
@@ -35,10 +37,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased w-full flex flex-col items-center`}>
-      {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
-					<GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
-				)}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased w-full flex flex-col items-center`}
+      >
+        {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
+        )}
+        <AuthQueryCapture />
         <div className="w-full flex flex-col min-h-screen h-full">
           <Navigation />
           <div className="flex flex-grow justify-center p-6 ">
@@ -46,7 +51,7 @@ export default function RootLayout({
           </div>
           <Footer />
         </div>
-        <Toaster/>
+        <Toaster />
       </body>
     </html>
   );
