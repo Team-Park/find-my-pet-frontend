@@ -6,6 +6,7 @@ import Footer from "@/app/_components/layout/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import GoogleAnalytics from "@/lib/GoogleAnalytics";
 import AuthQueryCapture from "@/app/_components/auth/AuthQueryCapture";
+import AdSenseScript from "@/app/_components/ads/AdSenseScript";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -43,6 +44,7 @@ export default function RootLayout({
         {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
         )}
+        <AdSenseScript />
         <AuthQueryCapture />
         <div className="w-full flex flex-col min-h-screen h-full">
           <Navigation />

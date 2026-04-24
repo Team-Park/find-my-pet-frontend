@@ -8,6 +8,10 @@ import apiClient from "@/lib/api";
 import LostPagination from "../LostPagination";
 import { ITEM_PER_PAGE } from "@/app/constant/constant";
 import NearbyFilter, { type NearbySetting } from "./NearbyFilter";
+import AdSlot from "../ads/AdSlot";
+
+/** 홈 피드 카드 몇 장마다 1번 광고 슬롯 삽입. */
+const AD_INTERVAL = 6;
 
 export interface ILostPet {
   author: string;
@@ -75,11 +79,26 @@ export default function LostList() {
         {isLoading ? (
           <PetListSkeleton />
         ) : (
-          lostPetList.map((pet) => (
-            <Link href={`/lost/${pet.id}`} key={pet.id}>
-              <LostCard {...pet} />
-            </Link>
-          ))
+          lostPetList.flatMap((pet, idx) => {
+            const node = (
+              <Link href={`/lost/${pet.id}`} key={pet.id}>
+                <LostCard {...pet} />
+              </Link>
+            );
+            // 카드 AD_INTERVAL 개마다 광고 1개 삽입 (맨 앞/마지막 제외)
+            const shouldInjectAd =
+              idx > 0 && (idx + 1) % AD_INTERVAL === 0 && idx !== lostPetList.length - 1;
+            if (!shouldInjectAd) return [node];
+            return [
+              node,
+              <AdSlot
+                key={`ad-${idx}`}
+                slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_FEED ?? ""}
+                format="fluid"
+                minHeight={240}
+              />,
+            ];
+          })
         )}
       </div>
       <LostPagination
