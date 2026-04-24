@@ -28,9 +28,10 @@ export default function AdFitSlot({ unit, width, height, className }: Props) {
     );
   }
   return (
+    // 공식 스니펫과 동일하게 display:none 으로 두고 AdFit 스크립트가 매칭 후 block 으로 토글.
     <ins
       className={`kakao_ad_area ${className ?? ""}`}
-      style={{ display: "block" }}
+      style={{ display: "none" }}
       data-ad-unit={unit}
       data-ad-width={String(width)}
       data-ad-height={String(height)}

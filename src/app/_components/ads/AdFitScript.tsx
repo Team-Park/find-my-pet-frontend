@@ -14,7 +14,7 @@ export default function AdFitScript() {
     <Script
       async
       strategy="afterInteractive"
-      src="https://t1.daumcdn.net/kas/static/ba.min.js"
+      src="https://t1.kakaocdn.net/kas/static/ba.min.js"
     />
   );
 }
