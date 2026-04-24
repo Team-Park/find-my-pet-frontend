@@ -9,9 +9,13 @@ import LostPagination from "../LostPagination";
 import { ITEM_PER_PAGE } from "@/app/constant/constant";
 import NearbyFilter, { type NearbySetting } from "./NearbyFilter";
 import AdSlot from "../ads/AdSlot";
+import AdFitSlot from "../ads/AdFitSlot";
 
 /** 홈 피드 카드 몇 장마다 1번 광고 슬롯 삽입. */
 const AD_INTERVAL = 6;
+/** AdFit 유닛이 설정돼 있으면 AdFit 우선, 없으면 AdSense fallback. */
+const ADFIT_FEED_UNIT = process.env.NEXT_PUBLIC_ADFIT_UNIT_FEED;
+const ADSENSE_FEED_SLOT = process.env.NEXT_PUBLIC_ADSENSE_SLOT_FEED;
 
 export interface ILostPet {
   author: string;
@@ -89,15 +93,23 @@ export default function LostList() {
             const shouldInjectAd =
               idx > 0 && (idx + 1) % AD_INTERVAL === 0 && idx !== lostPetList.length - 1;
             if (!shouldInjectAd) return [node];
-            return [
-              node,
+            const adNode = ADFIT_FEED_UNIT ? (
+              <AdFitSlot
+                key={`ad-${idx}`}
+                unit={ADFIT_FEED_UNIT}
+                width={300}
+                height={250}
+                className="mx-auto"
+              />
+            ) : (
               <AdSlot
                 key={`ad-${idx}`}
-                slot={process.env.NEXT_PUBLIC_ADSENSE_SLOT_FEED ?? ""}
+                slot={ADSENSE_FEED_SLOT ?? ""}
                 format="fluid"
                 minHeight={240}
-              />,
-            ];
+              />
+            );
+            return [node, adNode];
           })
         )}
       </div>
